@@ -540,5 +540,85 @@ function procesarQR(textoQR) {
 
 }
 
+const manualButton = document.getElementById("manualButton");
+
+manualButton.addEventListener("click", function () {
+
+  status.textContent = "⏳ Cargando alumnos...";
+
+  const callbackName =
+    "alumnosCallback_" + Date.now();
+
+  window[callbackName] = function (respuesta) {
+
+    delete window[callbackName];
+
+    if (!respuesta || !respuesta.ok) {
+      status.textContent = "❌ Error al cargar alumnos";
+      return;
+    }
+
+    const alumnos = respuesta.alumnos || [];
+
+    if (alumnos.length === 0) {
+      status.textContent = "❌ No hay alumnos registrados";
+      return;
+    }
+
+    let lista = "<h2>Selecciona un alumno</h2>";
+
+    alumnos.forEach(function (nombre) {
+
+      lista +=
+        '<button class="alumnoManual" data-alumno="' +
+        nombre.replace(/"/g, "&quot;") +
+        '">' +
+        nombre +
+        "</button>";
+
+    });
+
+    result.innerHTML = lista;
+    result.style.display = "block";
+
+    document
+      .querySelectorAll(".alumnoManual")
+      .forEach(function (boton) {
+
+        boton.addEventListener("click", function () {
+
+          const alumno =
+            this.getAttribute("data-alumno");
+
+          result.innerHTML =
+            "<div class='alumno'>Alumno: " +
+            alumno +
+            "</div>";
+
+          status.textContent =
+            "⏳ Consultando...";
+
+          // Aquí conectaremos con Google Sheets
+          // en el siguiente paso.
+
+        });
+
+      });
+
+  };
+
+  const script =
+    document.createElement("script");
+
+  script.src =
+    "https://script.google.com/macros/s/AKfycbw3GuXbZgYv9VkaF_9GrFHzjSuSfH61yy7OkaL7vFhBNKL0ynQAW9AffQBWrg_wMDi4/exec" +
+    "?accion=alumnos" +
+    "&callback=" +
+    callbackName;
+
+  document.body.appendChild(script);
+
+});
+
 </script></body>
 </html>
