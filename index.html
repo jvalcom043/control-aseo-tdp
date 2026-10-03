@@ -1,7 +1,13 @@
 <!DOCTYPE html><html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  <title>Control Aseo TDP</title>  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>  <style>
+  <meta charset="UTF-8"><meta
+name="viewport"
+content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+
+«»
+
+  <title>Control Aseo TDP</title>  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>  <style>
+
     * {
       box-sizing: border-box;
     }
@@ -20,9 +26,9 @@
     }
 
     #status {
-      padding: 10px;
+      padding: 12px;
       font-size: 17px;
-      min-height: 45px;
+      min-height: 48px;
     }
 
     #cameraContainer {
@@ -42,21 +48,47 @@
 
     #scanBox {
       position: absolute;
-      width: 70%;
-      height: 35%;
-      left: 15%;
-      top: 32%;
+      width: 75%;
+      height: 40%;
+      left: 12.5%;
+      top: 30%;
+
       border: 3px solid white;
       border-radius: 15px;
+
       pointer-events: none;
+    }
+
+    #scanText {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 15px;
+
+      font-size: 16px;
+      text-shadow: 0 1px 3px black;
+    }
+
+    #startButton {
+      padding: 14px 22px;
+      font-size: 18px;
+
+      border: none;
+      border-radius: 10px;
+
+      margin: 12px;
+
+      cursor: pointer;
     }
 
     #result {
       display: none;
+
       margin: 20px;
       padding: 20px;
+
       border-radius: 15px;
-      font-size: 20px;
+
       background: #222;
     }
 
@@ -70,107 +102,152 @@
       font-size: 20px;
     }
 
-    #startButton {
-      padding: 14px 22px;
-      font-size: 18px;
-      border: none;
-      border-radius: 10px;
-      margin: 10px;
-      cursor: pointer;
-    }
-
     canvas {
       display: none;
     }
+
   </style></head><body>  <h1>Control Aseo TDP</h1>  <div id="status">
     Pulsa «Activar cámara».
-  </div>  <div id="cameraContainer"><video id="video" autoplay playsinline muted></video>
+  </div>  <div id="cameraContainer"><video
+  id="video"
+  autoplay
+  playsinline
+  muted
+></video>
 
 <div id="scanBox"></div>
 
+<div id="scanText">
+  Coloca el QR dentro del recuadro
+</div>
+
   </div>  <button id="startButton">
     📷 Activar cámara
-  </button>  <div id="result"><div class="alumno" id="alumno"></div>
+  </button>  <div id="result"><div
+  class="alumno"
+  id="alumno"
+></div>
 
-<div class="grupo" id="grupo"></div>
+<div
+  class="grupo"
+  id="grupo"
+></div>
 
   </div><canvas id="canvas"></canvas>
 
   <script>
 
-    const video = document.getElementById("video");
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d", {
-      willReadFrequently: true
-    });
+    const video =
+      document.getElementById("video");
 
-    const status = document.getElementById("status");
-    const startButton = document.getElementById("startButton");
+    const canvas =
+      document.getElementById("canvas");
 
-    const result = document.getElementById("result");
-    const alumnoElement = document.getElementById("alumno");
-    const grupoElement = document.getElementById("grupo");
+    const ctx =
+      canvas.getContext(
+        "2d",
+        {
+          willReadFrequently: true
+        }
+      );
+
+    const status =
+      document.getElementById("status");
+
+    const startButton =
+      document.getElementById("startButton");
+
+    const result =
+      document.getElementById("result");
+
+    const alumnoElement =
+      document.getElementById("alumno");
+
+    const grupoElement =
+      document.getElementById("grupo");
+
 
     let stream = null;
+
     let scanning = false;
+
     let procesandoQR = false;
 
 
-    // -----------------------------------------
+    // ==========================================
     // ACTIVAR CÁMARA
-    // -----------------------------------------
+    // ==========================================
 
-    startButton.addEventListener("click", async function () {
+    startButton.addEventListener(
+      "click",
+      async function () {
 
-      try {
+        try {
 
-        status.textContent = "Solicitando acceso a la cámara...";
+          status.textContent =
+            "Solicitando acceso a la cámara...";
 
-        stream = await navigator.mediaDevices.getUserMedia({
 
-          video: {
-            facingMode: {
-              ideal: "environment"
-            },
-            width: {
-              ideal: 1280
-            },
-            height: {
-              ideal: 720
-            }
-          },
+          stream =
+            await navigator.mediaDevices.getUserMedia({
 
-          audio: false
+              video: {
 
-        });
+                facingMode: {
+                  ideal: "environment"
+                },
 
-        video.srcObject = stream;
+                width: {
+                  ideal: 1280
+                },
 
-        await video.play();
+                height: {
+                  ideal: 720
+                }
 
-        startButton.style.display = "none";
+              },
 
-        status.textContent = "📷 Buscando código QR...";
+              audio: false
 
-        scanning = true;
+            });
 
-        requestAnimationFrame(scanQR);
 
-      } catch (error) {
+          video.srcObject = stream;
 
-        console.error(error);
 
-        status.textContent =
-          "❌ No se pudo abrir la cámara. Comprueba el permiso del navegador.";
+          await video.play();
+
+
+          startButton.style.display =
+            "none";
+
+
+          status.textContent =
+            "📷 Cámara activa. Buscando QR...";
+
+
+          scanning = true;
+
+
+          scanQR();
+
+
+        } catch (error) {
+
+          console.error(error);
+
+          status.textContent =
+            "❌ No se pudo abrir la cámara.";
+
+        }
 
       }
+    );
 
-    });
 
-
-    // -----------------------------------------
-    // LECTOR QR CONTINUO
-    // -----------------------------------------
+    // ==========================================
+    // ESCANEO CONTINUO
+    // ==========================================
 
     function scanQR() {
 
@@ -178,109 +255,202 @@
         return;
       }
 
+
       if (
-        video.readyState === video.HAVE_ENOUGH_DATA &&
+        video.readyState ===
+          video.HAVE_ENOUGH_DATA &&
+
+        video.videoWidth > 0 &&
+
         !procesandoQR
       ) {
 
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
+
+        // Reducimos la imagen para que el móvil
+        // pueda analizarla rápidamente.
+
+        const maxWidth = 800;
+
+
+        const scale =
+          Math.min(
+            1,
+            maxWidth / video.videoWidth
+          );
+
+
+        const width =
+          Math.floor(
+            video.videoWidth * scale
+          );
+
+
+        const height =
+          Math.floor(
+            video.videoHeight * scale
+          );
+
+
+        canvas.width = width;
+
+        canvas.height = height;
+
 
         ctx.drawImage(
           video,
           0,
           0,
-          canvas.width,
-          canvas.height
+          width,
+          height
         );
 
-        const imageData = ctx.getImageData(
-          0,
-          0,
-          canvas.width,
-          canvas.height
-        );
 
-        const code = jsQR(
-          imageData.data,
-          imageData.width,
-          imageData.height,
-          {
-            inversionAttempts: "dontInvert"
-          }
-        );
+        const imageData =
+          ctx.getImageData(
+            0,
+            0,
+            width,
+            height
+          );
 
-        if (code) {
 
-          procesarQR(code.data);
+        // attemptBoth es más compatible
+        // con distintos tipos de QR.
+
+        const code =
+          jsQR(
+            imageData.data,
+            imageData.width,
+            imageData.height,
+            {
+              inversionAttempts:
+                "attemptBoth"
+            }
+          );
+
+
+        if (
+          code &&
+          code.data
+        ) {
+
+          procesarQR(
+            code.data
+          );
+
+          return;
 
         }
 
       }
 
-      requestAnimationFrame(scanQR);
+
+      // Aproximadamente 10 lecturas por segundo.
+
+      setTimeout(
+        function () {
+          requestAnimationFrame(scanQR);
+        },
+        100
+      );
+
     }
 
 
-    // -----------------------------------------
+    // ==========================================
     // PROCESAR QR
-    // -----------------------------------------
+    // ==========================================
 
     function procesarQR(textoQR) {
 
       procesandoQR = true;
 
-      console.log("QR detectado:", textoQR);
 
-      const partes = textoQR
-        .split("|")
-        .map(function (parte) {
-          return parte.trim();
-        });
+      console.log(
+        "QR detectado:",
+        textoQR
+      );
 
-      const alumno = partes[0] || "";
-      const grupo = partes[1] || "";
+
+      const partes =
+        String(textoQR)
+          .split("|")
+          .map(
+            function (parte) {
+              return parte.trim();
+            }
+          );
+
+
+      const alumno =
+        partes[0] || "";
+
+
+      const grupo =
+        partes[1] || "";
+
 
       if (!alumno) {
 
         status.textContent =
-          "❌ El QR no contiene un nombre de alumno.";
+          "❌ El QR no contiene alumno.";
 
-        setTimeout(function () {
-          procesandoQR = false;
-        }, 1500);
+
+        setTimeout(
+          function () {
+
+            procesandoQR = false;
+
+            scanQR();
+
+          },
+          1500
+        );
 
         return;
+
       }
 
-
-      // Mostrar lo que hemos leído
 
       alumnoElement.textContent =
         "Alumno: " + alumno;
 
-      grupoElement.textContent =
-        "Grupo: " + (grupo || "No indicado");
 
-      result.style.display = "block";
+      grupoElement.textContent =
+        "Grupo: " +
+        (grupo || "No indicado");
+
+
+      result.style.display =
+        "block";
+
 
       status.textContent =
-        "✅ QR leído correctamente";
+        "✅ QR detectado";
 
 
-      // Pausar brevemente para evitar
-      // leer el mismo QR varias veces
+      // Esperamos 2,5 segundos antes
+      // de volver a buscar.
 
-      setTimeout(function () {
+      setTimeout(
+        function () {
 
-        result.style.display = "none";
+          result.style.display =
+            "none";
 
-        status.textContent =
-          "📷 Buscando código QR...";
 
-        procesandoQR = false;
+          status.textContent =
+            "📷 Buscando QR...";
 
-      }, 2500);
+
+          procesandoQR = false;
+
+
+          scanQR();
+
+        },
+        2500
+      );
 
     }
 
