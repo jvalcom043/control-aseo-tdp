@@ -1,11 +1,7 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html><html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Control Aseo TDP</title>
-
-  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">  <title>Control Aseo TDP</title>  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>  <style>
     * {
       box-sizing: border-box;
     }
@@ -19,8 +15,14 @@
     }
 
     h1 {
-      margin: 15px 10px;
+      margin: 15px 10px 5px;
       font-size: 24px;
+    }
+
+    #status {
+      padding: 10px;
+      font-size: 17px;
+      min-height: 45px;
     }
 
     #cameraContainer {
@@ -46,78 +48,241 @@
       top: 32%;
       border: 3px solid white;
       border-radius: 15px;
+      pointer-events: none;
     }
 
-    #status {
-      padding: 15px;
-      font-size: 18px;
+    #result {
+      display: none;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 15px;
+      font-size: 20px;
+      background: #222;
     }
 
-    button {
+    #result .alumno {
+      font-size: 25px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    #result .grupo {
+      font-size: 20px;
+    }
+
+    #startButton {
       padding: 14px 22px;
       font-size: 18px;
       border: none;
       border-radius: 10px;
       margin: 10px;
+      cursor: pointer;
     }
-  </style>
-</head>
 
-<body>
+    canvas {
+      display: none;
+    }
+  </style></head><body>  <h1>Control Aseo TDP</h1>  <div id="status">
+    Pulsa «Activar cámara».
+  </div>  <div id="cameraContainer"><video id="video" autoplay playsinline muted></video>
 
-  <h1>Control Aseo TDP</h1>
+<div id="scanBox"></div>
 
-  <div id="cameraContainer">
-    <video id="video" autoplay playsinline muted></video>
-    <div id="scanBox"></div>
-  </div>
-
-  <div id="status">
-    Pulsa "Activar cámara".
-  </div>
-
-  <button id="startButton">
+  </div>  <button id="startButton">
     📷 Activar cámara
-  </button>
+  </button>  <div id="result"><div class="alumno" id="alumno"></div>
+
+<div class="grupo" id="grupo"></div>
+
+  </div><canvas id="canvas"></canvas>
 
   <script>
+
     const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d", {
+      willReadFrequently: true
+    });
+
     const status = document.getElementById("status");
     const startButton = document.getElementById("startButton");
 
-    let stream = null;
+    const result = document.getElementById("result");
+    const alumnoElement = document.getElementById("alumno");
+    const grupoElement = document.getElementById("grupo");
 
-    startButton.addEventListener("click", async () => {
+    let stream = null;
+    let scanning = false;
+    let procesandoQR = false;
+
+
+    // -----------------------------------------
+    // ACTIVAR CÁMARA
+    // -----------------------------------------
+
+    startButton.addEventListener("click", async function () {
 
       try {
+
         status.textContent = "Solicitando acceso a la cámara...";
 
         stream = await navigator.mediaDevices.getUserMedia({
+
           video: {
             facingMode: {
               ideal: "environment"
+            },
+            width: {
+              ideal: 1280
+            },
+            height: {
+              ideal: 720
             }
           },
+
           audio: false
+
         });
 
         video.srcObject = stream;
 
-        status.textContent = "✅ Cámara funcionando correctamente.";
+        await video.play();
 
         startButton.style.display = "none";
+
+        status.textContent = "📷 Buscando código QR...";
+
+        scanning = true;
+
+        requestAnimationFrame(scanQR);
 
       } catch (error) {
 
         console.error(error);
 
         status.textContent =
-          "❌ No se pudo abrir la cámara. Comprueba el permiso de cámara.";
+          "❌ No se pudo abrir la cámara. Comprueba el permiso del navegador.";
 
       }
 
     });
-  </script>
 
-</body>
+
+    // -----------------------------------------
+    // LECTOR QR CONTINUO
+    // -----------------------------------------
+
+    function scanQR() {
+
+      if (!scanning) {
+        return;
+      }
+
+      if (
+        video.readyState === video.HAVE_ENOUGH_DATA &&
+        !procesandoQR
+      ) {
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        ctx.drawImage(
+          video,
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+
+        const imageData = ctx.getImageData(
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
+
+        const code = jsQR(
+          imageData.data,
+          imageData.width,
+          imageData.height,
+          {
+            inversionAttempts: "dontInvert"
+          }
+        );
+
+        if (code) {
+
+          procesarQR(code.data);
+
+        }
+
+      }
+
+      requestAnimationFrame(scanQR);
+    }
+
+
+    // -----------------------------------------
+    // PROCESAR QR
+    // -----------------------------------------
+
+    function procesarQR(textoQR) {
+
+      procesandoQR = true;
+
+      console.log("QR detectado:", textoQR);
+
+      const partes = textoQR
+        .split("|")
+        .map(function (parte) {
+          return parte.trim();
+        });
+
+      const alumno = partes[0] || "";
+      const grupo = partes[1] || "";
+
+      if (!alumno) {
+
+        status.textContent =
+          "❌ El QR no contiene un nombre de alumno.";
+
+        setTimeout(function () {
+          procesandoQR = false;
+        }, 1500);
+
+        return;
+      }
+
+
+      // Mostrar lo que hemos leído
+
+      alumnoElement.textContent =
+        "Alumno: " + alumno;
+
+      grupoElement.textContent =
+        "Grupo: " + (grupo || "No indicado");
+
+      result.style.display = "block";
+
+      status.textContent =
+        "✅ QR leído correctamente";
+
+
+      // Pausar brevemente para evitar
+      // leer el mismo QR varias veces
+
+      setTimeout(function () {
+
+        result.style.display = "none";
+
+        status.textContent =
+          "📷 Buscando código QR...";
+
+        procesandoQR = false;
+
+      }, 2500);
+
+    }
+
+  </script></body>
 </html>
