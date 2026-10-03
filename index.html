@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Control Aseo TDP</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #111;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 15px 10px;
+      font-size: 24px;
+    }
+
+    #cameraContainer {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      margin: auto;
+      overflow: hidden;
+      background: black;
+    }
+
+    #video {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    #scanBox {
+      position: absolute;
+      width: 70%;
+      height: 35%;
+      left: 15%;
+      top: 32%;
+      border: 3px solid white;
+      border-radius: 15px;
+    }
+
+    #status {
+      padding: 15px;
+      font-size: 18px;
+    }
+
+    button {
+      padding: 14px 22px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      margin: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Control Aseo TDP</h1>
+
+  <div id="cameraContainer">
+    <video id="video" autoplay playsinline muted></video>
+    <div id="scanBox"></div>
+  </div>
+
+  <div id="status">
+    Pulsa "Activar cámara".
+  </div>
+
+  <button id="startButton">
+    📷 Activar cámara
+  </button>
+
+  <script>
+    const video = document.getElementById("video");
+    const status = document.getElementById("status");
+    const startButton = document.getElementById("startButton");
+
+    let stream = null;
+
+    startButton.addEventListener("click", async () => {
+
+      try {
+        status.textContent = "Solicitando acceso a la cámara...";
+
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: {
+              ideal: "environment"
+            }
+          },
+          audio: false
+        });
+
+        video.srcObject = stream;
+
+        status.textContent = "✅ Cámara funcionando correctamente.";
+
+        startButton.style.display = "none";
+
+      } catch (error) {
+
+        console.error(error);
+
+        status.textContent =
+          "❌ No se pudo abrir la cámara. Comprueba el permiso de cámara.";
+
+      }
+
+    });
+  </script>
+
+</body>
+</html>
