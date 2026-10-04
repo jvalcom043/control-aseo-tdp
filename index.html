@@ -1,815 +1,901 @@
-<!DOCTYPE html><html lang="es"><head>  <meta charset="UTF-8"><meta
-name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0,
+                 maximum-scale=1.0, user-scalable=no">
 
-«»
+  <title>Control Aseo TDP</title>
 
-  <title>Control Aseo TDP</title>  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>  <style>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+  <style>
 
     * {
       box-sizing: border-box;
     }
 
+    html,
     body {
       margin: 0;
-      background: #111;
-      color: white;
-      font-family: Arial, sans-serif;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #000;
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 500px;
+      min-height: 100vh;
+      padding: 20px 16px 30px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .titulo {
       text-align: center;
-    }
-
-    h1 {
-      margin: 15px 10px 5px;
       font-size: 24px;
+      font-weight: bold;
+      margin: 5px 0 8px;
     }
 
-    #status {
-      padding: 12px;
-      font-size: 17px;
-      min-height: 50px;
+    .subtitulo {
+      text-align: center;
+      color: #aaa;
+      font-size: 14px;
+      margin-bottom: 20px;
     }
 
     #cameraContainer {
       position: relative;
       width: 100%;
-      max-width: 600px;
-      margin: auto;
-      background: black;
+      aspect-ratio: 1 / 1;
+      max-height: 65vh;
+      background: #111;
+      border-radius: 18px;
       overflow: hidden;
+      display: none;
     }
 
     #video {
-      display: block;
       width: 100%;
-      height: auto;
+      height: 100%;
+      object-fit: cover;
     }
 
-    #scanBox {
+    .scanBox {
       position: absolute;
-      width: 75%;
-      height: 45%;
-      left: 12.5%;
-      top: 27.5%;
-      border: 3px solid white;
+      width: 65%;
+      aspect-ratio: 1 / 1;
+      left: 17.5%;
+      top: 17.5%;
+      border: 3px solid #fff;
       border-radius: 15px;
+      box-shadow:
+        0 0 0 9999px rgba(0,0,0,0.45);
       pointer-events: none;
     }
 
-    #scanText {
+    .scanLine {
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 15px;
-      font-size: 16px;
-      text-shadow: 0 1px 4px black;
+      left: 10%;
+      width: 80%;
+      height: 2px;
+      background: #fff;
+      top: 50%;
+      animation: scan 2s linear infinite;
     }
 
-    #startButton {
-      padding: 14px 22px;
-      font-size: 18px;
-      border: none;
-      border-radius: 10px;
-      margin: 12px;
+    @keyframes scan {
+      0% {
+        transform: translateY(-90px);
+      }
+
+      50% {
+        transform: translateY(90px);
+      }
+
+      100% {
+        transform: translateY(-90px);
+      }
     }
 
-    #manualButton {
-      padding: 14px 22px;
-      font-size: 18px;
-      border: none;
-      border-radius: 10px;
-      margin: 12px;
+    #canvas {
+      display: none;
+    }
+
+    #status {
+      text-align: center;
+      min-height: 24px;
+      margin: 14px 0;
+      color: #bbb;
+      font-size: 15px;
     }
 
     #result {
       display: none;
-      margin: 20px;
-      padding: 20px;
-      border-radius: 15px;
-      background: #222;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 18px;
     }
 
-    #result .alumno {
-      font-size: 25px;
+    .botones {
+      margin-top: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .botonPrincipal {
+      width: 100%;
+      border: none;
+      border-radius: 14px;
+      padding: 16px;
+      font-size: 17px;
       font-weight: bold;
+      background: #fff;
+      color: #000;
+      cursor: pointer;
+    }
+
+    .botonSecundario {
+      width: 100%;
+      border: 1px solid #555;
+      border-radius: 14px;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: bold;
+      background: #151515;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .manualPanel {
+      width: 100%;
+      text-align: left;
+    }
+
+    .manualPanel h2 {
+      margin: 0 0 12px;
+      text-align: center;
+      font-size: 21px;
+    }
+
+    .buscarAlumno {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid #444;
+      background: #151515;
+      color: #fff;
+      font-size: 16px;
+      outline: none;
       margin-bottom: 10px;
     }
 
-    #result .grupo {
-      font-size: 20px;
+    .buscarAlumno:focus {
+      border-color: #888;
     }
 
-    canvas {
-      display: none;
+    .buscarAlumno::placeholder {
+      color: #888;
     }
 
-  </style></head><body>  <h1>Control Aseo TDP</h1>  <div id="status">
-    Pulsa «Activar cámara».
-  </div>  <div id="cameraContainer"><video
-  id="video"
-  autoplay
-  playsinline
-  muted
-></video>
-
-<div id="scanBox"></div>
-
-<div id="scanText">
-  Coloca el QR dentro del recuadro
-</div>
-
-  </div>  <button id="startButton">
-    📷 Activar cámara
-  </button>
-    <button id="manualButton">
-  👤 Registro manual
-</button>
-  <div id="result"><div
-  class="alumno"
-  id="alumno"
-></div>
-
-<div
-  class="grupo"
-  id="grupo"
-></div>
-
-  </div><canvas id="canvas"></canvas>
-
-<script>
-
-const video =
-  document.getElementById("video");
-
-const canvas =
-  document.getElementById("canvas");
-
-const ctx =
-  canvas.getContext(
-    "2d",
-    {
-      willReadFrequently: true
+    .listaAlumnos {
+      width: 100%;
+      max-height: 48vh;
+      overflow-y: auto;
+      border: 1px solid #333;
+      border-radius: 12px;
+      background: #101010;
     }
-  );
 
-const status =
-  document.getElementById("status");
+    .alumnoManual {
+      display: block;
+      width: 100%;
+      padding: 13px 15px;
+      margin: 0;
+      border: none;
+      border-bottom: 1px solid #292929;
+      background: transparent;
+      color: #fff;
+      text-align: left;
+      font-size: 16px;
+      cursor: pointer;
+    }
 
-const startButton =
-  document.getElementById("startButton");
+    .alumnoManual:last-child {
+      border-bottom: none;
+    }
 
-const result =
-  document.getElementById("result");
+    .alumnoManual:active {
+      background: #292929;
+    }
 
-const alumnoElement =
-  document.getElementById("alumno");
+    .sinAlumnos {
+      padding: 20px;
+      text-align: center;
+      color: #888;
+    }
 
-const grupoElement =
-  document.getElementById("grupo");
+    .alumno {
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .resultadoPermitido {
+      padding: 25px 10px;
+    }
+
+    .resultadoDenegado {
+      padding: 25px 10px;
+    }
+
+    .iconoResultado {
+      font-size: 75px;
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+
+    .tituloResultado {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 14px;
+    }
+
+    .datosResultado {
+      font-size: 17px;
+      line-height: 1.7;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <div class="titulo">
+      Control Aseo TDP
+    </div>
+
+    <div class="subtitulo">
+      Control de acceso
+    </div>
+
+    <div id="cameraContainer">
+
+      <video
+        id="video"
+        autoplay
+        muted
+        playsinline>
+      </video>
+
+      <div class="scanBox">
+        <div class="scanLine"></div>
+      </div>
+
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <div id="status">
+      Pulsa "Activar cámara" para comenzar
+    </div>
+
+    <div id="result"></div>
+
+    <div class="botones">
+
+      <button
+        id="startButton"
+        class="botonPrincipal">
+        📷 Activar cámara
+      </button>
+
+      <button
+        id="manualButton"
+        class="botonSecundario">
+        👤 Registro manual
+      </button>
+
+    </div>
+
+  </div>
 
 
-let stream = null;
+  <script>
 
-let scanning = false;
+    /* =====================================================
+       CONFIGURACIÓN
+       ===================================================== */
 
-let procesandoQR = false;
-
-let detector = null;
-
-
-// ==========================================
-// ACTIVAR CÁMARA
-// ==========================================
-
-startButton.addEventListener(
-  "click",
-  iniciarCamara
-);
+    const APPS_SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbwmjR4yz2Psp-eoc3tpa9czj9pciq67Jq4zex77hkSny6dgieorVYqUpgQHD_ZIMOR2/exec";
 
 
-async function iniciarCamara() {
+    /* =====================================================
+       ELEMENTOS
+       ===================================================== */
 
-  try {
+    const video =
+      document.getElementById("video");
 
-    status.textContent =
-      "Solicitando acceso a la cámara...";
+    const canvas =
+      document.getElementById("canvas");
 
+    const ctx =
+      canvas.getContext("2d");
 
-    // No forzamos resolución.
-    // Dejamos que Android elija la adecuada.
+    const cameraContainer =
+      document.getElementById("cameraContainer");
 
-    stream =
-      await navigator.mediaDevices.getUserMedia({
+    const startButton =
+      document.getElementById("startButton");
 
-        video: {
-          facingMode: {
-            ideal: "environment"
-          }
-        },
+    const manualButton =
+      document.getElementById("manualButton");
 
-        audio: false
+    const status =
+      document.getElementById("status");
 
-      });
-
-
-    video.srcObject = stream;
-
-
-    await video.play();
+    const result =
+      document.getElementById("result");
 
 
-    startButton.style.display =
-      "none";
+    let stream = null;
+    let escaneando = false;
 
 
-    // ======================================
-    // INTENTAR DETECTOR NATIVO
-    // ======================================
+    /* =====================================================
+       ACTIVAR CÁMARA
+       ===================================================== */
 
-    if (
-      "BarcodeDetector" in window
-    ) {
+    startButton.addEventListener("click", async function() {
 
       try {
 
-        const formatos =
-          await BarcodeDetector.getSupportedFormats();
+        result.style.display = "none";
 
+        status.textContent =
+          "⏳ Activando cámara...";
 
-        if (
-          formatos.includes("qr_code")
-        ) {
+        stream =
+          await navigator.mediaDevices.getUserMedia({
+            video: {
+              facingMode: {
+                ideal: "environment"
+              }
+            },
+            audio: false
+          });
 
-          detector =
-            new BarcodeDetector({
-              formats: ["qr_code"]
-            });
+        video.srcObject = stream;
 
-          status.textContent =
-            "📷 Cámara activa. Detector QR nativo preparado.";
+        cameraContainer.style.display = "block";
 
-        } else {
+        escaneando = true;
 
-          status.textContent =
-            "📷 Cámara activa. Usando lector alternativo.";
+        status.textContent =
+          "📷 Apunta al código QR";
 
-          detector = null;
-
-        }
-
-      } catch (e) {
-
-        console.log(
-          "BarcodeDetector no disponible:",
-          e
+        requestAnimationFrame(
+          escanearQR
         );
-
-        detector = null;
-
-      }
-
-    } else {
-
-      status.textContent =
-        "📷 Cámara activa. Usando lector QR.";
-
-    }
-
-
-    scanning = true;
-
-    scanQR();
-
-
-  } catch (error) {
-
-    console.error(error);
-
-    status.textContent =
-      "❌ No se pudo abrir la cámara.";
-
-  }
-
-}
-
-
-// ==========================================
-// ESCANEO
-// ==========================================
-
-async function scanQR() {
-
-  if (!scanning) {
-    return;
-  }
-
-
-  if (
-    video.readyState ===
-      video.HAVE_ENOUGH_DATA &&
-
-    video.videoWidth > 0 &&
-
-    !procesandoQR
-  ) {
-
-
-    // ======================================
-    // MÉTODO 1: DETECTOR NATIVO
-    // ======================================
-
-    if (detector) {
-
-      try {
-
-        const resultados =
-          await detector.detect(video);
-
-
-        if (
-          resultados &&
-          resultados.length > 0
-        ) {
-
-          const texto =
-            resultados[0].rawValue;
-
-
-          if (texto) {
-
-            procesarQR(texto);
-
-            return;
-
-          }
-
-        }
 
       } catch (error) {
 
-        console.log(
-          "Error BarcodeDetector:",
-          error
-        );
+        console.error(error);
+
+        status.textContent =
+          "❌ No se puede acceder a la cámara";
 
       }
 
-    }
+    });
 
 
-    // ======================================
-    // MÉTODO 2: jsQR
-    // ======================================
+    /* =====================================================
+       ESCANEAR QR
+       ===================================================== */
 
-    const maxWidth = 1000;
+    function escanearQR() {
 
+      if (!escaneando) {
+        return;
+      }
 
-    const escala =
-      Math.min(
-        1,
-        maxWidth / video.videoWidth
-      );
+      if (
+        video.readyState ===
+        video.HAVE_ENOUGH_DATA
+      ) {
 
+        canvas.width =
+          video.videoWidth;
 
-    const width =
-      Math.floor(
-        video.videoWidth * escala
-      );
+        canvas.height =
+          video.videoHeight;
 
+        ctx.drawImage(
+          video,
+          0,
+          0,
+          canvas.width,
+          canvas.height
+        );
 
-    const height =
-      Math.floor(
-        video.videoHeight * escala
-      );
-
-
-    canvas.width = width;
-
-    canvas.height = height;
-
-
-    ctx.drawImage(
-      video,
-      0,
-      0,
-      width,
-      height
-    );
+        const imageData =
+          ctx.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height
+          );
 
 
-    const imageData =
-      ctx.getImageData(
-        0,
-        0,
-        width,
-        height
-      );
+        /* jsQR */
 
+        if (typeof jsQR !== "undefined") {
 
-    const codigo =
-      jsQR(
-        imageData.data,
-        imageData.width,
-        imageData.height,
-        {
-          inversionAttempts:
-            "attemptBoth"
+          const codigo =
+            jsQR(
+              imageData.data,
+              imageData.width,
+              imageData.height
+            );
+
+          if (codigo) {
+
+            procesarQR(
+              codigo.data
+            );
+
+            return;
+          }
+
         }
-      );
 
-
-    if (
-      codigo &&
-      codigo.data
-    ) {
-
-      procesarQR(
-        codigo.data
-      );
-
-      return;
-
-    }
-
-  }
-
-
-  setTimeout(
-    function () {
+      }
 
       requestAnimationFrame(
-        scanQR
+        escanearQR
       );
 
-    },
-    80
-  );
-
-}
+    }
 
 
-// ==========================================
-// PROCESAR QR
-// ==========================================
+    /* =====================================================
+       PROCESAR QR
+       ===================================================== */
 
-function procesarQR(textoQR) {
+    function procesarQR(textoQR) {
 
-  procesandoQR = true;
-
-
-  console.log(
-    "QR DETECTADO:",
-    textoQR
-  );
-
-
-  const partes =
-    String(textoQR)
-      .split("|")
-      .map(
-        function (parte) {
-          return parte.trim();
-        }
-      );
-
-
-  const alumno =
-    partes[0] || "";
-
-
-  const grupo =
-    partes[1] || "";
-
-
-  if (!alumno) {
-
-    status.textContent =
-      "❌ QR sin nombre de alumno.";
-
-    setTimeout(
-      function () {
-
-        procesandoQR = false;
-
-        scanQR();
-
-      },
-      1500
-    );
-
-    return;
-
-  }
-
-
-  alumnoElement.textContent =
-    "Alumno: " + alumno;
-
-
-  grupoElement.textContent =
-    "Grupo: " +
-    (grupo || "No indicado");
-
-
-  result.style.display =
-    "block";
-
-
-  status.textContent =
-    "✅ QR DETECTADO";
-
-
-  setTimeout(
-    function () {
-
-      result.style.display =
-        "none";
-
+      escaneando = false;
 
       status.textContent =
-        "📷 Buscando QR...";
+        "⏳ QR detectado. Consultando...";
+
+      const partes =
+        String(textoQR)
+          .trim()
+          .split("|");
+
+      const alumno =
+        (partes[0] || "").trim();
+
+      const grupo =
+        (partes[1] || "").trim();
 
 
-      procesandoQR = false;
+      if (!alumno) {
+
+        status.textContent =
+          "❌ QR no válido";
+
+        escaneando = true;
+
+        requestAnimationFrame(
+          escanearQR
+        );
+
+        return;
+      }
 
 
-      scanQR();
+      consultarAlumno(
+        alumno,
+        grupo
+      );
 
-    },
-    2500
-  );
-
-}
-
-const manualButton = document.getElementById("manualButton");
-
-manualButton.addEventListener("click", function () {
-
-  status.textContent = "⏳ Cargando alumnos...";
-
-  const callbackName =
-    "alumnosCallback_" + Date.now();
-
-  window[callbackName] = function (respuesta) {
-
-    delete window[callbackName];
-
-    if (!respuesta || !respuesta.ok) {
-      status.textContent = "❌ Error al cargar alumnos";
-      return;
     }
 
-    const alumnos = respuesta.alumnos || [];
 
-    if (alumnos.length === 0) {
-      status.textContent = "❌ No hay alumnos registrados";
-      return;
-    }
+    /* =====================================================
+       REGISTRO MANUAL
+       ===================================================== */
 
-    let lista = `
-  <div class="manualPanel">
-    <h2>Selecciona un alumno</h2>
+    manualButton.addEventListener(
+      "click",
+      function() {
 
-    <input
-      type="text"
-      id="buscarAlumno"
-      class="buscarAlumno"
-      placeholder="🔎 Buscar alumno..."
-      autocomplete="off"
-    >
+        status.textContent =
+          "⏳ Cargando alumnos...";
 
-    <div id="listaAlumnos" class="listaAlumnos"></div>
-  </div>
-`;
+        result.style.display =
+          "block";
 
-result.innerHTML = lista;
-result.style.display = "block";
-
-const buscarAlumno =
-  document.getElementById("buscarAlumno");
-
-const listaAlumnos =
-  document.getElementById("listaAlumnos");
+        const callbackName =
+          "alumnosCallback_" +
+          Date.now();
 
 
-function mostrarAlumnos(filtro) {
+        window[callbackName] =
+          function(respuesta) {
 
-  const texto = filtro.toLowerCase().trim();
+            delete window[callbackName];
 
-  const filtrados = alumnos.filter(function(nombre) {
-    return nombre.toLowerCase().includes(texto);
-  });
 
-  listaAlumnos.innerHTML = "";
+            if (
+              !respuesta ||
+              !respuesta.ok
+            ) {
 
-  if (filtrados.length === 0) {
-    listaAlumnos.innerHTML =
-      '<div class="sinAlumnos">No se encuentra ningún alumno</div>';
-    return;
-  }
+              status.textContent =
+                "❌ Error al cargar alumnos";
 
-  filtrados.forEach(function(nombre) {
+              return;
+            }
 
-    const fila =
-      document.createElement("button");
 
-    fila.type = "button";
-    fila.className = "alumnoManual";
-    fila.textContent = nombre;
+            const alumnos =
+              respuesta.alumnos || [];
 
-    fila.addEventListener("click", function() {
 
-      const alumno = nombre;
+            if (
+              alumnos.length === 0
+            ) {
+
+              status.textContent =
+                "❌ No hay alumnos registrados";
+
+              return;
+            }
+
+
+            result.innerHTML = `
+
+              <div class="manualPanel">
+
+                <h2>
+                  Selecciona un alumno
+                </h2>
+
+                <input
+                  type="text"
+                  id="buscarAlumno"
+                  class="buscarAlumno"
+                  placeholder="🔎 Buscar alumno..."
+                  autocomplete="off"
+                >
+
+                <div
+                  id="listaAlumnos"
+                  class="listaAlumnos">
+                </div>
+
+              </div>
+
+            `;
+
+
+            const buscarAlumno =
+              document.getElementById(
+                "buscarAlumno"
+              );
+
+            const listaAlumnos =
+              document.getElementById(
+                "listaAlumnos"
+              );
+
+
+            function mostrarAlumnos(
+              filtro
+            ) {
+
+              const texto =
+                String(filtro || "")
+                  .toLowerCase()
+                  .trim();
+
+
+              const filtrados =
+                alumnos.filter(
+                  function(nombre) {
+
+                    return String(nombre)
+                      .toLowerCase()
+                      .includes(texto);
+
+                  }
+                );
+
+
+              listaAlumnos.innerHTML =
+                "";
+
+
+              if (
+                filtrados.length === 0
+              ) {
+
+                listaAlumnos.innerHTML =
+                  '<div class="sinAlumnos">' +
+                  'No se encuentra ningún alumno' +
+                  '</div>';
+
+                return;
+              }
+
+
+              filtrados.forEach(
+                function(nombre) {
+
+                  const fila =
+                    document.createElement(
+                      "button"
+                    );
+
+                  fila.type =
+                    "button";
+
+                  fila.className =
+                    "alumnoManual";
+
+                  fila.textContent =
+                    nombre;
+
+
+                  fila.addEventListener(
+                    "click",
+                    function() {
+
+                      consultarAlumno(
+                        nombre,
+                        ""
+                      );
+
+                    }
+                  );
+
+
+                  listaAlumnos.appendChild(
+                    fila
+                  );
+
+                }
+              );
+
+            }
+
+
+            buscarAlumno.addEventListener(
+              "input",
+              function() {
+
+                mostrarAlumnos(
+                  this.value
+                );
+
+              }
+            );
+
+
+            mostrarAlumnos("");
+
+            buscarAlumno.focus();
+
+          };
+
+
+        const script =
+          document.createElement(
+            "script"
+          );
+
+
+        script.src =
+          APPS_SCRIPT_URL +
+          "?accion=alumnos" +
+          "&callback=" +
+          callbackName;
+
+
+        document.body.appendChild(
+          script
+        );
+
+      }
+    );
+
+
+    /* =====================================================
+       CONSULTAR ALUMNO
+       ===================================================== */
+
+    function consultarAlumno(
+      alumno,
+      grupo
+    ) {
 
       result.innerHTML =
-        "<div class='alumno'>Alumno: " +
+        "<div class='alumno'>" +
+        "Alumno: " +
         alumno +
         "</div>";
+
+      result.style.display =
+        "block";
+
 
       status.textContent =
         "⏳ Consultando...";
 
+
       const callbackConsulta =
-        "consultaCallback_" + Date.now();
+        "consultaCallback_" +
+        Date.now();
 
-      window[callbackConsulta] = function(respuesta) {
 
-        delete window[callbackConsulta];
+      window[callbackConsulta] =
+        function(respuesta) {
 
-        if (!respuesta || respuesta.error) {
-          status.textContent =
-            "❌ Error en la consulta";
-          return;
-        }
+          delete window[
+            callbackConsulta
+          ];
 
-        if (respuesta.puede) {
 
-          result.innerHTML =
-            "<div style='font-size:70px'>🟢</div>" +
-            "<div style='font-size:28px;font-weight:bold'>" +
-            "ACCESO PERMITIDO" +
-            "</div>" +
-            "<div>Alumno: " +
-            respuesta.alumno +
-            "</div>" +
-            "<div>Usos hoy: " +
-            respuesta.vecesHoy +
-            "</div>";
+          if (
+            !respuesta ||
+            respuesta.error
+          ) {
 
-          status.textContent =
-            "✅ Puede acceder";
+            status.textContent =
+              "❌ Error en la consulta";
 
-        } else {
+            return;
+          }
 
-          result.innerHTML =
-            "<div style='font-size:70px'>🔴</div>" +
-            "<div style='font-size:28px;font-weight:bold'>" +
-            "ACCESO DENEGADO" +
-            "</div>" +
-            "<div>Alumno: " +
-            respuesta.alumno +
-            "</div>" +
-            "<div>Usos hoy: " +
-            respuesta.vecesHoy +
-            "</div>";
 
-          status.textContent =
-            "⛔ No puede acceder";
-        }
+          /* =========================================
+             ACCESO PERMITIDO
+             ========================================= */
 
-      };
+          if (
+            respuesta.puede
+          ) {
+
+            result.innerHTML = `
+
+              <div class="resultadoPermitido">
+
+                <div class="iconoResultado">
+                  🟢
+                </div>
+
+                <div class="tituloResultado">
+                  ACCESO PERMITIDO
+                </div>
+
+                <div class="datosResultado">
+
+                  <div>
+                    Alumno:
+                    ${respuesta.alumno}
+                  </div>
+
+                  <div>
+                    Usos hoy:
+                    ${respuesta.vecesHoy}
+                  </div>
+
+                </div>
+
+              </div>
+
+            `;
+
+
+            status.textContent =
+              "✅ Puede acceder";
+
+
+          }
+
+          /* =========================================
+             ACCESO DENEGADO
+             ========================================= */
+
+          else {
+
+            result.innerHTML = `
+
+              <div class="resultadoDenegado">
+
+                <div class="iconoResultado">
+                  🔴
+                </div>
+
+                <div class="tituloResultado">
+                  ACCESO DENEGADO
+                </div>
+
+                <div class="datosResultado">
+
+                  <div>
+                    Alumno:
+                    ${respuesta.alumno}
+                  </div>
+
+                  <div>
+                    Usos hoy:
+                    ${respuesta.vecesHoy}
+                  </div>
+
+                </div>
+
+              </div>
+
+            `;
+
+
+            status.textContent =
+              "⛔ No puede acceder";
+
+          }
+
+        };
 
 
       const scriptConsulta =
-        document.createElement("script");
+        document.createElement(
+          "script"
+        );
+
 
       scriptConsulta.src =
-        "https://script.google.com/macros/s/AKfycbwmjR4yz2Psp-eoc3tpa9czj9pciq67Jq4zex77hkSny6dgieorVYqUpgQHD_ZIMOR2/exec" +
+        APPS_SCRIPT_URL +
         "?accion=consultar" +
         "&alumno=" +
         encodeURIComponent(alumno) +
         "&grupo=" +
+        encodeURIComponent(grupo || "") +
         "&callback=" +
         callbackConsulta;
 
-      document.body.appendChild(scriptConsulta);
 
-    });
+      document.body.appendChild(
+        scriptConsulta
+      );
 
-    listaAlumnos.appendChild(fila);
+    }
 
-  });
-}
+  </script>
 
-
-buscarAlumno.addEventListener(
-  "input",
-  function() {
-    mostrarAlumnos(this.value);
-  }
-);
-
-mostrarAlumnos("");
-
-    result.innerHTML = lista;
-    result.style.display = "block";
-
-    document
-      .querySelectorAll(".alumnoManual")
-      .forEach(function (boton) {
-
-        boton.addEventListener("click", function () {
-
-          const alumno =
-            this.getAttribute("data-alumno");
-
-          result.innerHTML =
-            "<div class='alumno'>Alumno: " +
-            alumno +
-            "</div>";
-
-          status.textContent =
-            "⏳ Consultando...";
-const callbackConsulta =
-  "consultaCallback_" + Date.now();
-
-window[callbackConsulta] = function (respuesta) {
-
-  delete window[callbackConsulta];
-
-  if (!respuesta || respuesta.error) {
-    status.textContent = "❌ Error en la consulta";
-    return;
-  }
-
-  if (respuesta.puede) {
-
-    result.innerHTML =
-      "<div style='font-size:70px'>🟢</div>" +
-      "<div style='font-size:28px;font-weight:bold'>" +
-      "ACCESO PERMITIDO" +
-      "</div>" +
-      "<div>Alumno: " +
-      respuesta.alumno +
-      "</div>" +
-      "<div>Usos hoy: " +
-      respuesta.vecesHoy +
-      "</div>";
-
-    status.textContent = "✅ Puede acceder";
-
-  } else {
-
-    result.innerHTML =
-      "<div style='font-size:70px'>🔴</div>" +
-      "<div style='font-size:28px;font-weight:bold'>" +
-      "ACCESO DENEGADO" +
-      "</div>" +
-      "<div>Alumno: " +
-      respuesta.alumno +
-      "</div>" +
-      "<div>Usos hoy: " +
-      respuesta.vecesHoy +
-      "</div>";
-
-    status.textContent = "⛔ No puede acceder";
-  }
-
-  result.style.display = "block";
-};
-
-
-const scriptConsulta =
-  document.createElement("script");
-
-scriptConsulta.src =
-  "https://script.google.com/macros/s/AKfycbwmjR4yz2Psp-eoc3tpa9czj9pciq67Jq4zex77hkSny6dgieorVYqUpgQHD_ZIMOR2/exec" +
-  "?accion=consultar" +
-  "&alumno=" +
-  encodeURIComponent(alumno) +
-  "&grupo=" +
-  "&callback=" +
-  callbackConsulta;
-
-document.body.appendChild(scriptConsulta);
-
-        });
-
-      });
-
-  };
-
-  const script =
-    document.createElement("script");
-
-  script.src =
-    "https://script.google.com/macros/s/AKfycbwmjR4yz2Psp-eoc3tpa9czj9pciq67Jq4zex77hkSny6dgieorVYqUpgQHD_ZIMOR2/exec" +
-    "?accion=alumnos" +
-    "&callback=" +
-    callbackName;
-
-  document.body.appendChild(script);
-
-});
-
-</script></body>
+</body>
 </html>
