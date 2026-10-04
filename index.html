@@ -565,18 +565,150 @@ manualButton.addEventListener("click", function () {
       return;
     }
 
-    let lista = "<h2>Selecciona un alumno</h2>";
+    let lista = `
+  <div class="manualPanel">
+    <h2>Selecciona un alumno</h2>
 
-    alumnos.forEach(function (nombre) {
+    <input
+      type="text"
+      id="buscarAlumno"
+      class="buscarAlumno"
+      placeholder="🔎 Buscar alumno..."
+      autocomplete="off"
+    >
 
-      lista +=
-        '<button class="alumnoManual" data-alumno="' +
-        nombre.replace(/"/g, "&quot;") +
-        '">' +
-        nombre +
-        "</button>";
+    <div id="listaAlumnos" class="listaAlumnos"></div>
+  </div>
+`;
+
+result.innerHTML = lista;
+result.style.display = "block";
+
+const buscarAlumno =
+  document.getElementById("buscarAlumno");
+
+const listaAlumnos =
+  document.getElementById("listaAlumnos");
+
+
+function mostrarAlumnos(filtro) {
+
+  const texto = filtro.toLowerCase().trim();
+
+  const filtrados = alumnos.filter(function(nombre) {
+    return nombre.toLowerCase().includes(texto);
+  });
+
+  listaAlumnos.innerHTML = "";
+
+  if (filtrados.length === 0) {
+    listaAlumnos.innerHTML =
+      '<div class="sinAlumnos">No se encuentra ningún alumno</div>';
+    return;
+  }
+
+  filtrados.forEach(function(nombre) {
+
+    const fila =
+      document.createElement("button");
+
+    fila.type = "button";
+    fila.className = "alumnoManual";
+    fila.textContent = nombre;
+
+    fila.addEventListener("click", function() {
+
+      const alumno = nombre;
+
+      result.innerHTML =
+        "<div class='alumno'>Alumno: " +
+        alumno +
+        "</div>";
+
+      status.textContent =
+        "⏳ Consultando...";
+
+      const callbackConsulta =
+        "consultaCallback_" + Date.now();
+
+      window[callbackConsulta] = function(respuesta) {
+
+        delete window[callbackConsulta];
+
+        if (!respuesta || respuesta.error) {
+          status.textContent =
+            "❌ Error en la consulta";
+          return;
+        }
+
+        if (respuesta.puede) {
+
+          result.innerHTML =
+            "<div style='font-size:70px'>🟢</div>" +
+            "<div style='font-size:28px;font-weight:bold'>" +
+            "ACCESO PERMITIDO" +
+            "</div>" +
+            "<div>Alumno: " +
+            respuesta.alumno +
+            "</div>" +
+            "<div>Usos hoy: " +
+            respuesta.vecesHoy +
+            "</div>";
+
+          status.textContent =
+            "✅ Puede acceder";
+
+        } else {
+
+          result.innerHTML =
+            "<div style='font-size:70px'>🔴</div>" +
+            "<div style='font-size:28px;font-weight:bold'>" +
+            "ACCESO DENEGADO" +
+            "</div>" +
+            "<div>Alumno: " +
+            respuesta.alumno +
+            "</div>" +
+            "<div>Usos hoy: " +
+            respuesta.vecesHoy +
+            "</div>";
+
+          status.textContent =
+            "⛔ No puede acceder";
+        }
+
+      };
+
+
+      const scriptConsulta =
+        document.createElement("script");
+
+      scriptConsulta.src =
+        "https://script.google.com/macros/s/AKfycbwmjR4yz2Psp-eoc3tpa9czj9pciq67Jq4zex77hkSny6dgieorVYqUpgQHD_ZIMOR2/exec" +
+        "?accion=consultar" +
+        "&alumno=" +
+        encodeURIComponent(alumno) +
+        "&grupo=" +
+        "&callback=" +
+        callbackConsulta;
+
+      document.body.appendChild(scriptConsulta);
 
     });
+
+    listaAlumnos.appendChild(fila);
+
+  });
+}
+
+
+buscarAlumno.addEventListener(
+  "input",
+  function() {
+    mostrarAlumnos(this.value);
+  }
+);
+
+mostrarAlumnos("");
 
     result.innerHTML = lista;
     result.style.display = "block";
