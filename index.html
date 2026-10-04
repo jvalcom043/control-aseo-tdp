@@ -2,171 +2,1271 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Control Aseo TDP</title>
+
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
 <style>
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;width:100%;min-height:100%;background:#000;color:#fff;font-family:Arial,Helvetica,sans-serif}
-body{min-height:100vh;display:flex;justify-content:center}
-.app{width:100%;max-width:500px;min-height:100vh;padding:20px 16px 30px;display:flex;flex-direction:column}
-.titulo{text-align:center;font-size:24px;font-weight:bold;margin:5px 0 8px}
-.subtitulo{text-align:center;color:#aaa;font-size:14px;margin-bottom:20px}
-#cameraContainer{position:relative;width:100%;aspect-ratio:1/1;max-height:65vh;background:#111;border-radius:18px;overflow:hidden;display:none}
-#video{width:100%;height:100%;object-fit:cover}
-.scanBox{position:absolute;width:65%;aspect-ratio:1/1;left:17.5%;top:17.5%;border:3px solid #fff;border-radius:15px;box-shadow:0 0 0 9999px rgba(0,0,0,.45);pointer-events:none}
-.scanLine{position:absolute;left:10%;width:80%;height:2px;background:#fff;top:50%;animation:scan 2s linear infinite}
-@keyframes scan{0%{transform:translateY(-90px)}50%{transform:translateY(90px)}100%{transform:translateY(-90px)}}
-#canvas{display:none}
-#status{text-align:center;min-height:24px;margin:14px 0;color:#bbb;font-size:15px}
-#result{display:none;width:100%;text-align:center;margin-bottom:18px}
-.botones{margin-top:auto;display:flex;flex-direction:column;gap:10px}
-.botonPrincipal{width:100%;border:none;border-radius:14px;padding:16px;font-size:17px;font-weight:bold;background:#fff;color:#000;cursor:pointer}
-.botonSecundario{width:100%;border:1px solid #555;border-radius:14px;padding:15px;font-size:16px;font-weight:bold;background:#151515;color:#fff;cursor:pointer}
-button:active{transform:scale(.98)}
-.manualPanel{width:100%;text-align:left}
-.manualPanel h2{margin:0 0 12px;text-align:center;font-size:21px}
-.buscarAlumno{width:100%;padding:14px 16px;border-radius:12px;border:1px solid #444;background:#151515;color:#fff;font-size:16px;outline:none;margin-bottom:10px}
-.buscarAlumno:focus{border-color:#888}
-.buscarAlumno::placeholder{color:#888}
-.listaAlumnos{width:100%;max-height:48vh;overflow-y:auto;border:1px solid #333;border-radius:12px;background:#101010}
-.alumnoManual{display:block;width:100%;padding:13px 15px;margin:0;border:none;border-bottom:1px solid #292929;background:transparent;color:#fff;text-align:left;font-size:16px;cursor:pointer}
-.alumnoManual:last-child{border-bottom:none}
-.alumnoManual:active{background:#292929}
-.grupoAlumno{display:block;margin-top:3px;color:#888;font-size:13px}
-.sinAlumnos{padding:20px;text-align:center;color:#888}
-.alumno{font-size:18px;margin-bottom:12px}
-.resultadoPermitido,.resultadoDenegado{padding:25px 10px}
-.iconoResultado{font-size:75px;line-height:1;margin-bottom:12px}
-.tituloResultado{font-size:28px;font-weight:bold;margin-bottom:14px}
-.datosResultado{font-size:17px;line-height:1.7}
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: #000;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+}
+
+.app {
+  width: 100%;
+  max-width: 500px;
+  min-height: 100vh;
+  padding: 20px 16px 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.titulo {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 5px 0 8px;
+}
+
+.subtitulo {
+  text-align: center;
+  color: #aaa;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* =========================
+   CÁMARA
+   ========================= */
+
+#cameraContainer {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 65vh;
+  background: #111;
+  border-radius: 18px;
+  overflow: hidden;
+  display: none;
+}
+
+#video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.scanBox {
+  position: absolute;
+  width: 65%;
+  aspect-ratio: 1 / 1;
+  left: 17.5%;
+  top: 17.5%;
+  border: 3px solid #fff;
+  border-radius: 15px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, .45);
+  pointer-events: none;
+}
+
+.scanLine {
+  position: absolute;
+  left: 10%;
+  width: 80%;
+  height: 2px;
+  background: #fff;
+  top: 50%;
+  animation: scan 2s linear infinite;
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(-90px);
+  }
+
+  50% {
+    transform: translateY(90px);
+  }
+
+  100% {
+    transform: translateY(-90px);
+  }
+}
+
+#canvas {
+  display: none;
+}
+
+/* =========================
+   ESTADO
+   ========================= */
+
+#status {
+  text-align: center;
+  min-height: 24px;
+  margin: 14px 0;
+  color: #bbb;
+  font-size: 15px;
+}
+
+/* =========================
+   RESULTADO
+   ========================= */
+
+#result {
+  display: none;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.resultadoPermitido,
+.resultadoDenegado {
+  padding: 25px 10px;
+}
+
+.iconoResultado {
+  font-size: 75px;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.tituloResultado {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 14px;
+}
+
+.datosResultado {
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.alumno {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+/* =========================
+   BOTONES
+   ========================= */
+
+.botones {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.botonPrincipal {
+  width: 100%;
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 17px;
+  font-weight: bold;
+  background: #fff;
+  color: #000;
+  cursor: pointer;
+}
+
+.botonSecundario {
+  width: 100%;
+  border: 1px solid #555;
+  border-radius: 14px;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: bold;
+  background: #151515;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+/* =========================
+   REGISTRO MANUAL
+   ========================= */
+
+.manualPanel {
+  width: 100%;
+  text-align: left;
+}
+
+.manualPanel h2 {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 21px;
+}
+
+.buscarAlumno {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #444;
+  background: #151515;
+  color: #fff;
+  font-size: 16px;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+.buscarAlumno:focus {
+  border-color: #888;
+}
+
+.buscarAlumno::placeholder {
+  color: #888;
+}
+
+.listaAlumnos {
+  width: 100%;
+  max-height: 48vh;
+  overflow-y: auto;
+  border: 1px solid #333;
+  border-radius: 12px;
+  background: #101010;
+}
+
+.alumnoManual {
+  display: block;
+  width: 100%;
+  padding: 13px 15px;
+  margin: 0;
+  border: none;
+  border-bottom: 1px solid #292929;
+  background: transparent;
+  color: #fff;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.alumnoManual:last-child {
+  border-bottom: none;
+}
+
+.alumnoManual:active {
+  background: #292929;
+}
+
+.nombreAlumno {
+  display: block;
+  font-size: 16px;
+}
+
+.grupoAlumno {
+  display: block;
+  margin-top: 3px;
+  color: #888;
+  font-size: 13px;
+}
+
+.sinAlumnos {
+  padding: 20px;
+  text-align: center;
+  color: #888;
+}
 </style>
 </head>
+
 <body>
+
 <div class="app">
-<div class="titulo">Control Aseo TDP</div>
-<div class="subtitulo">Control de acceso</div>
-<div id="cameraContainer"><video id="video" autoplay muted playsinline></video><div class="scanBox"><div class="scanLine"></div></div></div>
-<canvas id="canvas"></canvas>
-<div id="status">Pulsa "Activar cámara" para comenzar</div>
-<div id="result"></div>
-<div class="botones">
-<button id="startButton" class="botonPrincipal">📷 Activar cámara</button>
-<button id="manualButton" class="botonSecundario">👤 Registro manual</button>
+
+  <div class="titulo">
+    Control Aseo TDP
+  </div>
+
+  <div class="subtitulo">
+    Control de acceso
+  </div>
+
+  <!-- CÁMARA -->
+
+  <div id="cameraContainer">
+
+    <video
+      id="video"
+      autoplay
+      muted
+      playsinline>
+    </video>
+
+    <div class="scanBox">
+      <div class="scanLine"></div>
+    </div>
+
+  </div>
+
+  <canvas id="canvas"></canvas>
+
+  <div id="status">
+    Pulsa "Activar cámara" para comenzar
+  </div>
+
+  <div id="result"></div>
+
+  <!-- BOTONES -->
+
+  <div class="botones">
+
+    <button
+      id="startButton"
+      class="botonPrincipal">
+      📷 Activar cámara
+    </button>
+
+    <button
+      id="manualButton"
+      class="botonSecundario">
+      👤 Registro manual
+    </button>
+
+  </div>
+
 </div>
-</div>
+
+
 <script>
-const APPS_SCRIPT_URL="https://script.google.com/macros/s/AKfycbwmjR4yz2Psp-eoc3tpa9czj9pciq67Jq4zex77hkSny6dgieorVYqUpgQHD_ZIMOR2/exec";
-const video=document.getElementById("video");
-const canvas=document.getElementById("canvas");
-const ctx=canvas.getContext("2d");
-const cameraContainer=document.getElementById("cameraContainer");
-const startButton=document.getElementById("startButton");
-const manualButton=document.getElementById("manualButton");
-const status=document.getElementById("status");
-const result=document.getElementById("result");
-let stream=null,escaneando=false;
 
-startButton.addEventListener("click",async function(){
-try{
-result.style.display="none";
-status.textContent="⏳ Activando cámara...";
-stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});
-video.srcObject=stream;
-cameraContainer.style.display="block";
-escaneando=true;
-status.textContent="📷 Apunta al código QR";
-requestAnimationFrame(escanearQR);
-}catch(error){console.error(error);status.textContent="❌ No se puede acceder a la cámara";}
+/* =========================================================
+   CONFIGURACIÓN
+   ========================================================= */
+
+const APPS_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbwmjR4yz2Psp-eoc3tpa9czj9pciq67Jq4zex77hkSny6dgieorVYqUpgQHD_ZIMOR2/exec";
+
+
+/* =========================================================
+   ELEMENTOS
+   ========================================================= */
+
+const video =
+  document.getElementById("video");
+
+const canvas =
+  document.getElementById("canvas");
+
+const ctx =
+  canvas.getContext("2d");
+
+const cameraContainer =
+  document.getElementById("cameraContainer");
+
+const startButton =
+  document.getElementById("startButton");
+
+const manualButton =
+  document.getElementById("manualButton");
+
+const status =
+  document.getElementById("status");
+
+const result =
+  document.getElementById("result");
+
+
+/* =========================================================
+   VARIABLES
+   ========================================================= */
+
+let stream = null;
+
+let escaneando = false;
+
+let ultimoQR = "";
+
+let tiempoUltimoQR = 0;
+
+
+/* =========================================================
+   ACTIVAR CÁMARA
+   ========================================================= */
+
+startButton.addEventListener("click", async function () {
+
+  try {
+
+    result.style.display = "none";
+
+    status.textContent =
+      "⏳ Activando cámara...";
+
+    if (!navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia) {
+
+      status.textContent =
+        "❌ Este navegador no permite acceder a la cámara.";
+
+      return;
+    }
+
+    stream =
+      await navigator.mediaDevices.getUserMedia({
+
+        video: {
+          facingMode: {
+            ideal: "environment"
+          }
+        },
+
+        audio: false
+
+      });
+
+    video.srcObject = stream;
+
+    cameraContainer.style.display =
+      "block";
+
+    escaneando = true;
+
+    ultimoQR = "";
+
+    status.textContent =
+      "📷 Apunta al código QR";
+
+    requestAnimationFrame(escanearQR);
+
+  } catch (error) {
+
+    console.error(error);
+
+    status.textContent =
+      "❌ No se puede acceder a la cámara. Comprueba los permisos.";
+
+  }
+
 });
 
-function escanearQR(){
-if(!escaneando)return;
-if(video.readyState===video.HAVE_ENOUGH_DATA){
-canvas.width=video.videoWidth;canvas.height=video.videoHeight;
-ctx.drawImage(video,0,0,canvas.width,canvas.height);
-const imageData=ctx.getImageData(0,0,canvas.width,canvas.height);
-if(typeof jsQR!=="undefined"){
-const codigo=jsQR(imageData.data,imageData.width,imageData.height);
-if(codigo){procesarQR(codigo.data);return;}
-}}
-requestAnimationFrame(escanearQR);
+
+/* =========================================================
+   ESCANEAR QR
+   ========================================================= */
+
+function escanearQR() {
+
+  if (!escaneando) {
+    return;
+  }
+
+  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+
+    canvas.width =
+      video.videoWidth;
+
+    canvas.height =
+      video.videoHeight;
+
+    ctx.drawImage(
+      video,
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    const imageData =
+      ctx.getImageData(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+    if (typeof jsQR !== "undefined") {
+
+      const codigo =
+        jsQR(
+          imageData.data,
+          imageData.width,
+          imageData.height
+        );
+
+      if (codigo) {
+
+        const ahora =
+          Date.now();
+
+        /*
+         Evita leer varias veces el mismo QR
+         inmediatamente.
+        */
+
+        if (
+          codigo.data !== ultimoQR ||
+          ahora - tiempoUltimoQR > 3000
+        ) {
+
+          ultimoQR =
+            codigo.data;
+
+          tiempoUltimoQR =
+            ahora;
+
+          procesarQR(
+            codigo.data
+          );
+
+          return;
+        }
+
+      }
+
+    }
+
+  }
+
+  requestAnimationFrame(
+    escanearQR
+  );
 }
 
-function procesarQR(textoQR){
-escaneando=false;
-status.textContent="⏳ QR detectado. Consultando...";
-const partes=String(textoQR).trim().split("|");
-const alumno=(partes[0]||"").trim();
-const grupo=(partes[1]||"").trim();
-if(!alumno){status.textContent="❌ QR no válido";escaneando=true;requestAnimationFrame(escanearQR);return;}
-consultarAlumno(alumno,grupo,"QR");
+
+/* =========================================================
+   PROCESAR QR
+   ========================================================= */
+
+function procesarQR(textoQR) {
+
+  escaneando = false;
+
+  status.textContent =
+    "⏳ QR detectado. Consultando...";
+
+  const partes =
+    String(textoQR)
+      .trim()
+      .split("|");
+
+  const alumno =
+    (partes[0] || "").trim();
+
+  const grupo =
+    (partes[1] || "").trim();
+
+  if (!alumno) {
+
+    status.textContent =
+      "❌ QR no válido";
+
+    escaneando = true;
+
+    requestAnimationFrame(
+      escanearQR
+    );
+
+    return;
+  }
+
+  consultarAlumno(
+    alumno,
+    grupo,
+    "QR"
+  );
 }
 
-manualButton.addEventListener("click",function(){
-status.textContent="⏳ Cargando alumnos...";
-result.style.display="block";
-const callbackName="alumnosCallback_"+Date.now();
-window[callbackName]=function(respuesta){
-delete window[callbackName];
-if(!respuesta||!respuesta.ok){status.textContent="❌ Error al cargar alumnos";return;}
-const alumnos=respuesta.alumnos||[];
-if(alumnos.length===0){status.textContent="❌ No hay alumnos registrados";return;}
-result.innerHTML=`<div class="manualPanel"><h2>Selecciona un alumno</h2><input type="text" id="buscarAlumno" class="buscarAlumno" placeholder="🔎 Buscar alumno..." autocomplete="off"><div id="listaAlumnos" class="listaAlumnos"></div></div>`;
-const buscarAlumno=document.getElementById("buscarAlumno");
-const listaAlumnos=document.getElementById("listaAlumnos");
 
-function mostrarAlumnos(filtro){
-const texto=String(filtro||"").toLowerCase().trim();
-const filtrados=alumnos.filter(function(item){
-const nombre=String(item.nombre||"");
-const grupo=String(item.grupo||"");
-return nombre.toLowerCase().includes(texto)||grupo.toLowerCase().includes(texto);
-});
-listaAlumnos.innerHTML="";
-if(filtrados.length===0){listaAlumnos.innerHTML='<div class="sinAlumnos">No se encuentra ningún alumno</div>';return;}
-filtrados.forEach(function(item){
-const fila=document.createElement("button");
-fila.type="button";fila.className="alumnoManual";
-const nombre=document.createElement("span");nombre.textContent=item.nombre;fila.appendChild(nombre);
-if(item.grupo){const grupo=document.createElement("span");grupo.className="grupoAlumno";grupo.textContent="Grupo: "+item.grupo;fila.appendChild(grupo);}
-fila.addEventListener("click",function(){consultarAlumno(item.nombre,item.grupo||"","MANUAL");});
-listaAlumnos.appendChild(fila);
-});
-}
-buscarAlumno.addEventListener("input",function(){mostrarAlumnos(this.value);});
-mostrarAlumnos("");buscarAlumno.focus();
-};
-const script=document.createElement("script");
-script.src=APPS_SCRIPT_URL+"?accion=alumnos&callback="+callbackName;
-document.body.appendChild(script);
-});
+/* =========================================================
+   REGISTRO MANUAL
+   ========================================================= */
 
-function consultarAlumno(alumno,grupo,tipo){
-result.innerHTML="<div class='alumno'>Alumno: "+escapeHtml(alumno)+"</div>";
-result.style.display="block";
-status.textContent="⏳ Consultando...";
-const callbackConsulta="consultaCallback_"+Date.now();
-window[callbackConsulta]=function(respuesta){
-delete window[callbackConsulta];
-if(!respuesta||respuesta.error){status.textContent="❌ Error en la consulta: "+(respuesta&&respuesta.error?respuesta.error:"respuesta no válida");return;}
-const usosMostrados=Number.isFinite(Number(respuesta.vecesHoyMostradas))?Number(respuesta.vecesHoyMostradas):Number(respuesta.vecesHoy||0)+1;
-const grupoResultado=respuesta.grupo||grupo||"";
-if(respuesta.puede){
-result.innerHTML=`<div class="resultadoPermitido"><div class="iconoResultado">🟢</div><div class="tituloResultado">ACCESO PERMITIDO</div><div class="datosResultado"><div>Alumno: ${escapeHtml(respuesta.alumno)}</div><div>Grupo: ${escapeHtml(grupoResultado)}</div><div>Usos hoy: ${usosMostrados}</div></div></div>`;
-status.textContent="✅ Puede acceder";
-}else{
-result.innerHTML=`<div class="resultadoDenegado"><div class="iconoResultado">🔴</div><div class="tituloResultado">ACCESO DENEGADO</div><div class="datosResultado"><div>Alumno: ${escapeHtml(respuesta.alumno)}</div><div>Grupo: ${escapeHtml(grupoResultado)}</div><div>Usos hoy: ${usosMostrados}</div></div></div>`;
-status.textContent="⛔ No puede acceder";
-}};
-const scriptConsulta=document.createElement("script");
-scriptConsulta.src=APPS_SCRIPT_URL+"?accion=consultar&alumno="+encodeURIComponent(alumno)+"&grupo="+encodeURIComponent(grupo||"")+"&tipo="+encodeURIComponent(tipo||"MANUAL")+"&callback="+callbackConsulta;
-document.body.appendChild(scriptConsulta);
+manualButton.addEventListener(
+  "click",
+  function () {
+
+    /*
+     Paramos el escaneo si estaba activo.
+    */
+
+    escaneando = false;
+
+    result.style.display =
+      "block";
+
+    status.textContent =
+      "⏳ Cargando alumnos...";
+
+
+    /*
+     JSONP para evitar problemas
+     de CORS con Apps Script.
+    */
+
+    const callbackName =
+      "alumnosCallback_" +
+      Date.now();
+
+
+    window[callbackName] =
+      function (respuesta) {
+
+        delete window[callbackName];
+
+
+        if (
+          !respuesta ||
+          !respuesta.ok
+        ) {
+
+          status.textContent =
+            "❌ Error al cargar alumnos";
+
+          return;
+        }
+
+
+        const alumnos =
+          respuesta.alumnos || [];
+
+
+        if (
+          alumnos.length === 0
+        ) {
+
+          status.textContent =
+            "❌ No hay alumnos registrados";
+
+          return;
+        }
+
+
+        /*
+         IMPORTANTE:
+
+         Cada alumno recibido es:
+
+         {
+           nombre: "...",
+           grupo: "..."
+         }
+
+         No se muestra directamente el objeto.
+        */
+
+        result.innerHTML = `
+
+          <div class="manualPanel">
+
+            <h2>
+              Selecciona un alumno
+            </h2>
+
+            <input
+              type="text"
+              id="buscarAlumno"
+              class="buscarAlumno"
+              placeholder="🔎 Buscar alumno..."
+              autocomplete="off"
+            >
+
+            <div
+              id="listaAlumnos"
+              class="listaAlumnos">
+            </div>
+
+          </div>
+
+        `;
+
+
+        const buscarAlumno =
+          document.getElementById(
+            "buscarAlumno"
+          );
+
+        const listaAlumnos =
+          document.getElementById(
+            "listaAlumnos"
+          );
+
+
+        /* -----------------------------------------
+           MOSTRAR ALUMNOS
+           ----------------------------------------- */
+
+        function mostrarAlumnos(filtro) {
+
+          const texto =
+            String(filtro || "")
+              .toLowerCase()
+              .trim();
+
+
+          const filtrados =
+            alumnos.filter(
+              function (item) {
+
+                /*
+                 Compatibilidad por si algún
+                 dato antiguo llegara como texto.
+                */
+
+                let nombre = "";
+                let grupo = "";
+
+
+                if (
+                  typeof item === "string"
+                ) {
+
+                  nombre =
+                    item;
+
+                } else if (
+                  item &&
+                  typeof item === "object"
+                ) {
+
+                  nombre =
+                    String(
+                      item.nombre || ""
+                    );
+
+                  grupo =
+                    String(
+                      item.grupo || ""
+                    );
+
+                }
+
+
+                return (
+
+                  nombre
+                    .toLowerCase()
+                    .includes(texto)
+
+                  ||
+
+                  grupo
+                    .toLowerCase()
+                    .includes(texto)
+
+                );
+
+              }
+            );
+
+
+          listaAlumnos.innerHTML =
+            "";
+
+
+          if (
+            filtrados.length === 0
+          ) {
+
+            listaAlumnos.innerHTML = `
+
+              <div class="sinAlumnos">
+                No se encuentra ningún alumno
+              </div>
+
+            `;
+
+            return;
+          }
+
+
+          filtrados.forEach(
+            function (item) {
+
+              let nombre = "";
+              let grupo = "";
+
+
+              if (
+                typeof item === "string"
+              ) {
+
+                nombre =
+                  item;
+
+              } else if (
+                item &&
+                typeof item === "object"
+              ) {
+
+                nombre =
+                  String(
+                    item.nombre || ""
+                  );
+
+                grupo =
+                  String(
+                    item.grupo || ""
+                  );
+
+              }
+
+
+              /*
+               Creamos botón.
+              */
+
+              const fila =
+                document.createElement(
+                  "button"
+                );
+
+              fila.type =
+                "button";
+
+              fila.className =
+                "alumnoManual";
+
+
+              /*
+               Nombre
+              */
+
+              const nombreElemento =
+                document.createElement(
+                  "span"
+                );
+
+              nombreElemento.className =
+                "nombreAlumno";
+
+              nombreElemento.textContent =
+                nombre;
+
+
+              fila.appendChild(
+                nombreElemento
+              );
+
+
+              /*
+               Grupo
+              */
+
+              if (grupo) {
+
+                const grupoElemento =
+                  document.createElement(
+                    "span"
+                  );
+
+                grupoElemento.className =
+                  "grupoAlumno";
+
+                grupoElemento.textContent =
+                  "Grupo: " + grupo;
+
+
+                fila.appendChild(
+                  grupoElemento
+                );
+
+              }
+
+
+              /*
+               Al pulsar alumno:
+               enviamos nombre Y grupo.
+              */
+
+              fila.addEventListener(
+                "click",
+                function () {
+
+                  consultarAlumno(
+                    nombre,
+                    grupo,
+                    "MANUAL"
+                  );
+
+                }
+              );
+
+
+              listaAlumnos.appendChild(
+                fila
+              );
+
+            }
+          );
+
+        }
+
+
+        /*
+         Buscar mientras escribe.
+        */
+
+        buscarAlumno.addEventListener(
+          "input",
+          function () {
+
+            mostrarAlumnos(
+              this.value
+            );
+
+          }
+        );
+
+
+        /*
+         Mostrar todos inicialmente.
+        */
+
+        mostrarAlumnos("");
+
+
+        /*
+         Poner el cursor en buscar.
+        */
+
+        buscarAlumno.focus();
+
+      };
+
+
+    /*
+     Cargar alumnos desde Apps Script.
+    */
+
+    const script =
+      document.createElement(
+        "script"
+      );
+
+    script.src =
+      APPS_SCRIPT_URL +
+      "?accion=alumnos" +
+      "&callback=" +
+      callbackName;
+
+    document.body.appendChild(
+      script
+    );
+
+  }
+);
+
+
+/* =========================================================
+   CONSULTAR ALUMNO
+   ========================================================= */
+
+function consultarAlumno(
+  alumno,
+  grupo,
+  tipo
+) {
+
+  result.innerHTML = `
+
+    <div class="alumno">
+      Alumno: ${escapeHtml(alumno)}
+    </div>
+
+  `;
+
+  result.style.display =
+    "block";
+
+
+  status.textContent =
+    "⏳ Consultando...";
+
+
+  /*
+   Nombre único para JSONP.
+  */
+
+  const callbackConsulta =
+    "consultaCallback_" +
+    Date.now();
+
+
+  window[callbackConsulta] =
+    function (respuesta) {
+
+      delete window[
+        callbackConsulta
+      ];
+
+
+      /*
+       Error.
+      */
+
+      if (
+        !respuesta ||
+        respuesta.error
+      ) {
+
+        status.textContent =
+          "❌ Error en la consulta: " +
+          (
+            respuesta &&
+            respuesta.error
+              ? respuesta.error
+              : "respuesta no válida"
+          );
+
+        return;
+      }
+
+
+      /*
+       B10 devuelve el número de usos
+       que ya llevaba.
+
+       La aplicación muestra +1,
+       como pediste.
+      */
+
+      let usosMostrados;
+
+
+      if (
+        Number.isFinite(
+          Number(
+            respuesta.vecesHoyMostradas
+          )
+        )
+      ) {
+
+        usosMostrados =
+          Number(
+            respuesta.vecesHoyMostradas
+          );
+
+      } else {
+
+        usosMostrados =
+          Number(
+            respuesta.vecesHoy || 0
+          ) + 1;
+
+      }
+
+
+      /*
+       Grupo final.
+
+       Para QR:
+       grupo del QR.
+
+       Para manual:
+       grupo de Alumnado.
+      */
+
+      const grupoResultado =
+        respuesta.grupo ||
+        grupo ||
+        "";
+
+
+      /* ======================================
+         VERDE
+         ====================================== */
+
+      if (respuesta.puede) {
+
+        result.innerHTML = `
+
+          <div class="resultadoPermitido">
+
+            <div class="iconoResultado">
+              🟢
+            </div>
+
+            <div class="tituloResultado">
+              ACCESO PERMITIDO
+            </div>
+
+            <div class="datosResultado">
+
+              <div>
+                Alumno:
+                ${escapeHtml(
+                  respuesta.alumno
+                )}
+              </div>
+
+              <div>
+                Grupo:
+                ${escapeHtml(
+                  grupoResultado
+                )}
+              </div>
+
+              <div>
+                Usos hoy:
+                ${usosMostrados}
+              </div>
+
+            </div>
+
+          </div>
+
+        `;
+
+        status.textContent =
+          "✅ Puede acceder";
+
+
+      /*
+       ======================================
+       ROJO
+       ======================================
+      */
+
+      } else {
+
+        result.innerHTML = `
+
+          <div class="resultadoDenegado">
+
+            <div class="iconoResultado">
+              🔴
+            </div>
+
+            <div class="tituloResultado">
+              ACCESO DENEGADO
+            </div>
+
+            <div class="datosResultado">
+
+              <div>
+                Alumno:
+                ${escapeHtml(
+                  respuesta.alumno
+                )}
+              </div>
+
+              <div>
+                Grupo:
+                ${escapeHtml(
+                  grupoResultado
+                )}
+              </div>
+
+              <div>
+                Usos hoy:
+                ${usosMostrados}
+              </div>
+
+            </div>
+
+          </div>
+
+        `;
+
+        status.textContent =
+          "⛔ No puede acceder";
+
+      }
+
+    };
+
+
+  /*
+   Llamada al Apps Script.
+  */
+
+  const scriptConsulta =
+    document.createElement(
+      "script"
+    );
+
+
+  scriptConsulta.src =
+    APPS_SCRIPT_URL +
+
+    "?accion=consultar" +
+
+    "&alumno=" +
+    encodeURIComponent(
+      alumno
+    ) +
+
+    "&grupo=" +
+    encodeURIComponent(
+      grupo || ""
+    ) +
+
+    "&tipo=" +
+    encodeURIComponent(
+      tipo || "MANUAL"
+    ) +
+
+    "&callback=" +
+    callbackConsulta;
+
+
+  document.body.appendChild(
+    scriptConsulta
+  );
+
 }
 
-function escapeHtml(texto){
-return String(texto||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+
+/* =========================================================
+   ESCAPAR HTML
+   ========================================================= */
+
+function escapeHtml(texto) {
+
+  return String(
+    texto || ""
+  )
+
+    .replace(
+      /&/g,
+      "&amp;"
+    )
+
+    .replace(
+      /</g,
+      "&lt;"
+    )
+
+    .replace(
+      />/g,
+      "&gt;"
+    )
+
+    .replace(
+      /"/g,
+      "&quot;"
+    )
+
+    .replace(
+      /'/g,
+      "&#039;"
+    );
+
 }
+
 </script>
+
 </body>
 </html>
