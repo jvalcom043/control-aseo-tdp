@@ -597,9 +597,68 @@ manualButton.addEventListener("click", function () {
 
           status.textContent =
             "⏳ Consultando...";
+const callbackConsulta =
+  "consultaCallback_" + Date.now();
 
-          // Aquí conectaremos con Google Sheets
-          // en el siguiente paso.
+window[callbackConsulta] = function (respuesta) {
+
+  delete window[callbackConsulta];
+
+  if (!respuesta || respuesta.error) {
+    status.textContent = "❌ Error en la consulta";
+    return;
+  }
+
+  if (respuesta.puede) {
+
+    result.innerHTML =
+      "<div style='font-size:70px'>🟢</div>" +
+      "<div style='font-size:28px;font-weight:bold'>" +
+      "ACCESO PERMITIDO" +
+      "</div>" +
+      "<div>Alumno: " +
+      respuesta.alumno +
+      "</div>" +
+      "<div>Usos hoy: " +
+      respuesta.vecesHoy +
+      "</div>";
+
+    status.textContent = "✅ Puede acceder";
+
+  } else {
+
+    result.innerHTML =
+      "<div style='font-size:70px'>🔴</div>" +
+      "<div style='font-size:28px;font-weight:bold'>" +
+      "ACCESO DENEGADO" +
+      "</div>" +
+      "<div>Alumno: " +
+      respuesta.alumno +
+      "</div>" +
+      "<div>Usos hoy: " +
+      respuesta.vecesHoy +
+      "</div>";
+
+    status.textContent = "⛔ No puede acceder";
+  }
+
+  result.style.display = "block";
+};
+
+
+const scriptConsulta =
+  document.createElement("script");
+
+scriptConsulta.src =
+  "https://script.google.com/macros/s/AKfycbw3GuXbZgYv9VkaF_9GrFHzjSuSfH61yy7OkaL7vFhBNKL0ynQAW9AffQBWrg_wMDi4/exec" +
+  "?accion=consultar" +
+  "&alumno=" +
+  encodeURIComponent(alumno) +
+  "&grupo=" +
+  "&callback=" +
+  callbackConsulta;
+
+document.body.appendChild(scriptConsulta);
 
         });
 
