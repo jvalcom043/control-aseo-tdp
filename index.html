@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0,
-                 maximum-scale=1.0, user-scalable=no">
+
+  <meta
+    name="viewport"
+    content="width=device-width,
+             initial-scale=1.0,
+             maximum-scale=1.0,
+             user-scalable=no">
 
   <title>Control Aseo TDP</title>
 
+
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
 
   <style>
 
@@ -16,268 +24,494 @@
       box-sizing: border-box;
     }
 
+
     html,
     body {
+
       margin: 0;
       padding: 0;
+
       width: 100%;
       min-height: 100%;
+
       background: #000;
       color: #fff;
-      font-family: Arial, Helvetica, sans-serif;
+
+      font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
     }
+
 
     body {
+
       min-height: 100vh;
+
       display: flex;
+
       justify-content: center;
+
     }
+
 
     .app {
+
       width: 100%;
       max-width: 500px;
+
       min-height: 100vh;
-      padding: 20px 16px 30px;
+
+      padding:
+        20px
+        16px
+        30px;
+
       display: flex;
+
       flex-direction: column;
+
     }
+
 
     .titulo {
+
       text-align: center;
+
       font-size: 24px;
+
       font-weight: bold;
-      margin: 5px 0 8px;
+
+      margin:
+        5px
+        0
+        8px;
+
     }
+
 
     .subtitulo {
+
       text-align: center;
+
       color: #aaa;
+
       font-size: 14px;
+
       margin-bottom: 20px;
+
     }
+
 
     #cameraContainer {
+
       position: relative;
+
       width: 100%;
+
       aspect-ratio: 1 / 1;
+
       max-height: 65vh;
+
       background: #111;
+
       border-radius: 18px;
+
       overflow: hidden;
+
       display: none;
+
     }
+
 
     #video {
+
       width: 100%;
       height: 100%;
+
       object-fit: cover;
+
     }
+
 
     .scanBox {
+
       position: absolute;
+
       width: 65%;
+
       aspect-ratio: 1 / 1;
+
       left: 17.5%;
+
       top: 17.5%;
-      border: 3px solid #fff;
+
+      border:
+        3px solid #fff;
+
       border-radius: 15px;
+
       box-shadow:
-        0 0 0 9999px rgba(0,0,0,0.45);
+        0 0 0 9999px
+        rgba(0,0,0,0.45);
+
       pointer-events: none;
+
     }
+
 
     .scanLine {
+
       position: absolute;
+
       left: 10%;
+
       width: 80%;
+
       height: 2px;
+
       background: #fff;
+
       top: 50%;
-      animation: scan 2s linear infinite;
+
+      animation:
+        scan 2s linear infinite;
+
     }
 
+
     @keyframes scan {
+
       0% {
-        transform: translateY(-90px);
+        transform:
+          translateY(-90px);
       }
 
       50% {
-        transform: translateY(90px);
+        transform:
+          translateY(90px);
       }
 
       100% {
-        transform: translateY(-90px);
+        transform:
+          translateY(-90px);
       }
+
     }
+
 
     #canvas {
       display: none;
     }
 
+
     #status {
+
       text-align: center;
+
       min-height: 24px;
-      margin: 14px 0;
+
+      margin:
+        14px
+        0;
+
       color: #bbb;
+
       font-size: 15px;
+
     }
+
 
     #result {
+
       display: none;
+
       width: 100%;
+
       text-align: center;
+
       margin-bottom: 18px;
+
     }
+
 
     .botones {
+
       margin-top: auto;
+
       display: flex;
+
       flex-direction: column;
+
       gap: 10px;
+
     }
+
 
     .botonPrincipal {
+
       width: 100%;
+
       border: none;
+
       border-radius: 14px;
+
       padding: 16px;
+
       font-size: 17px;
+
       font-weight: bold;
+
       background: #fff;
+
       color: #000;
+
       cursor: pointer;
+
     }
+
 
     .botonSecundario {
+
       width: 100%;
-      border: 1px solid #555;
+
+      border:
+        1px solid #555;
+
       border-radius: 14px;
+
       padding: 15px;
+
       font-size: 16px;
+
       font-weight: bold;
+
       background: #151515;
+
       color: #fff;
+
       cursor: pointer;
+
     }
+
 
     button:active {
-      transform: scale(0.98);
+
+      transform:
+        scale(0.98);
+
     }
+
 
     .manualPanel {
+
       width: 100%;
+
       text-align: left;
+
     }
+
 
     .manualPanel h2 {
-      margin: 0 0 12px;
+
+      margin:
+        0
+        0
+        12px;
+
       text-align: center;
+
       font-size: 21px;
+
     }
+
 
     .buscarAlumno {
+
       width: 100%;
-      padding: 14px 16px;
+
+      padding:
+        14px
+        16px;
+
       border-radius: 12px;
-      border: 1px solid #444;
+
+      border:
+        1px solid #444;
+
       background: #151515;
+
       color: #fff;
+
       font-size: 16px;
+
       outline: none;
+
       margin-bottom: 10px;
+
     }
+
 
     .buscarAlumno:focus {
+
       border-color: #888;
+
     }
+
 
     .buscarAlumno::placeholder {
+
       color: #888;
+
     }
+
 
     .listaAlumnos {
+
       width: 100%;
+
       max-height: 48vh;
+
       overflow-y: auto;
-      border: 1px solid #333;
+
+      border:
+        1px solid #333;
+
       border-radius: 12px;
+
       background: #101010;
+
     }
+
 
     .alumnoManual {
+
       display: block;
+
       width: 100%;
-      padding: 13px 15px;
+
+      padding:
+        13px
+        15px;
+
       margin: 0;
+
       border: none;
-      border-bottom: 1px solid #292929;
+
+      border-bottom:
+        1px solid #292929;
+
       background: transparent;
+
       color: #fff;
+
       text-align: left;
+
       font-size: 16px;
+
       cursor: pointer;
+
     }
+
 
     .alumnoManual:last-child {
+
       border-bottom: none;
+
     }
+
 
     .alumnoManual:active {
+
       background: #292929;
+
     }
+
 
     .sinAlumnos {
+
       padding: 20px;
+
       text-align: center;
+
       color: #888;
+
     }
+
 
     .alumno {
+
       font-size: 18px;
+
       margin-bottom: 12px;
+
     }
 
-    .resultadoPermitido {
-      padding: 25px 10px;
-    }
 
+    .resultadoPermitido,
     .resultadoDenegado {
-      padding: 25px 10px;
+
+      padding:
+        25px
+        10px;
+
     }
+
 
     .iconoResultado {
+
       font-size: 75px;
+
       line-height: 1;
+
       margin-bottom: 12px;
+
     }
+
 
     .tituloResultado {
+
       font-size: 28px;
+
       font-weight: bold;
+
       margin-bottom: 14px;
+
     }
 
+
     .datosResultado {
+
       font-size: 17px;
+
       line-height: 1.7;
+
     }
 
   </style>
+
 </head>
+
 
 <body>
 
+
   <div class="app">
+
 
     <div class="titulo">
       Control Aseo TDP
     </div>
 
+
     <div class="subtitulo">
       Control de acceso
     </div>
 
+
     <div id="cameraContainer">
+
 
       <video
         id="video"
@@ -286,40 +520,57 @@
         playsinline>
       </video>
 
+
       <div class="scanBox">
+
         <div class="scanLine"></div>
+
       </div>
+
 
     </div>
 
+
     <canvas id="canvas"></canvas>
+
 
     <div id="status">
       Pulsa "Activar cámara" para comenzar
     </div>
 
+
     <div id="result"></div>
 
+
     <div class="botones">
+
 
       <button
         id="startButton"
         class="botonPrincipal">
+
         📷 Activar cámara
+
       </button>
+
 
       <button
         id="manualButton"
         class="botonSecundario">
+
         👤 Registro manual
+
       </button>
 
+
     </div>
+
 
   </div>
 
 
   <script>
+
 
     /* =====================================================
        CONFIGURACIÓN
@@ -334,31 +585,55 @@
        ===================================================== */
 
     const video =
-      document.getElementById("video");
+      document.getElementById(
+        "video"
+      );
+
 
     const canvas =
-      document.getElementById("canvas");
+      document.getElementById(
+        "canvas"
+      );
+
 
     const ctx =
-      canvas.getContext("2d");
+      canvas.getContext(
+        "2d"
+      );
+
 
     const cameraContainer =
-      document.getElementById("cameraContainer");
+      document.getElementById(
+        "cameraContainer"
+      );
+
 
     const startButton =
-      document.getElementById("startButton");
+      document.getElementById(
+        "startButton"
+      );
+
 
     const manualButton =
-      document.getElementById("manualButton");
+      document.getElementById(
+        "manualButton"
+      );
+
 
     const status =
-      document.getElementById("status");
+      document.getElementById(
+        "status"
+      );
+
 
     const result =
-      document.getElementById("result");
+      document.getElementById(
+        "result"
+      );
 
 
     let stream = null;
+
     let escaneando = false;
 
 
@@ -366,48 +641,71 @@
        ACTIVAR CÁMARA
        ===================================================== */
 
-    startButton.addEventListener("click", async function() {
+    startButton.addEventListener(
+      "click",
+      async function() {
 
-      try {
+        try {
 
-        result.style.display = "none";
+          result.style.display =
+            "none";
 
-        status.textContent =
-          "⏳ Activando cámara...";
 
-        stream =
-          await navigator.mediaDevices.getUserMedia({
-            video: {
-              facingMode: {
-                ideal: "environment"
-              }
-            },
-            audio: false
-          });
+          status.textContent =
+            "⏳ Activando cámara...";
 
-        video.srcObject = stream;
 
-        cameraContainer.style.display = "block";
+          stream =
+            await navigator.mediaDevices
+              .getUserMedia({
 
-        escaneando = true;
+                video: {
 
-        status.textContent =
-          "📷 Apunta al código QR";
+                  facingMode: {
+                    ideal:
+                      "environment"
+                  }
 
-        requestAnimationFrame(
-          escanearQR
-        );
+                },
 
-      } catch (error) {
+                audio: false
 
-        console.error(error);
+              });
 
-        status.textContent =
-          "❌ No se puede acceder a la cámara";
+
+          video.srcObject =
+            stream;
+
+
+          cameraContainer.style.display =
+            "block";
+
+
+          escaneando =
+            true;
+
+
+          status.textContent =
+            "📷 Apunta al código QR";
+
+
+          requestAnimationFrame(
+            escanearQR
+          );
+
+
+        } catch (error) {
+
+          console.error(error);
+
+
+          status.textContent =
+            "❌ No se puede acceder a la cámara";
+
+        }
 
       }
-
-    });
+    );
 
 
     /* =====================================================
@@ -420,44 +718,63 @@
         return;
       }
 
+
       if (
         video.readyState ===
         video.HAVE_ENOUGH_DATA
       ) {
 
+
         canvas.width =
           video.videoWidth;
+
 
         canvas.height =
           video.videoHeight;
 
+
         ctx.drawImage(
+
           video,
+
           0,
           0,
+
           canvas.width,
           canvas.height
+
         );
+
 
         const imageData =
           ctx.getImageData(
+
             0,
             0,
+
             canvas.width,
             canvas.height
+
           );
 
 
-        /* jsQR */
+        if (
+          typeof jsQR !==
+          "undefined"
+        ) {
 
-        if (typeof jsQR !== "undefined") {
 
           const codigo =
             jsQR(
+
               imageData.data,
+
               imageData.width,
+
               imageData.height
+
             );
+
 
           if (codigo) {
 
@@ -466,11 +783,13 @@
             );
 
             return;
+
           }
 
         }
 
       }
+
 
       requestAnimationFrame(
         escanearQR
@@ -483,23 +802,33 @@
        PROCESAR QR
        ===================================================== */
 
-    function procesarQR(textoQR) {
+    function procesarQR(
+      textoQR
+    ) {
 
-      escaneando = false;
+
+      escaneando =
+        false;
+
 
       status.textContent =
         "⏳ QR detectado. Consultando...";
+
 
       const partes =
         String(textoQR)
           .trim()
           .split("|");
 
+
       const alumno =
-        (partes[0] || "").trim();
+        (partes[0] || "")
+          .trim();
+
 
       const grupo =
-        (partes[1] || "").trim();
+        (partes[1] || "")
+          .trim();
 
 
       if (!alumno) {
@@ -507,19 +836,29 @@
         status.textContent =
           "❌ QR no válido";
 
-        escaneando = true;
+
+        escaneando =
+          true;
+
 
         requestAnimationFrame(
           escanearQR
         );
 
+
         return;
+
       }
 
 
       consultarAlumno(
+
         alumno,
-        grupo
+
+        grupo,
+
+        "QR"
+
       );
 
     }
@@ -533,11 +872,14 @@
       "click",
       function() {
 
+
         status.textContent =
           "⏳ Cargando alumnos...";
 
+
         result.style.display =
           "block";
+
 
         const callbackName =
           "alumnosCallback_" +
@@ -547,7 +889,10 @@
         window[callbackName] =
           function(respuesta) {
 
-            delete window[callbackName];
+
+            delete window[
+              callbackName
+            ];
 
 
             if (
@@ -559,11 +904,13 @@
                 "❌ Error al cargar alumnos";
 
               return;
+
             }
 
 
             const alumnos =
-              respuesta.alumnos || [];
+              respuesta.alumnos ||
+              [];
 
 
             if (
@@ -574,6 +921,7 @@
                 "❌ No hay alumnos registrados";
 
               return;
+
             }
 
 
@@ -585,17 +933,28 @@
                   Selecciona un alumno
                 </h2>
 
+
                 <input
+
                   type="text"
+
                   id="buscarAlumno"
+
                   class="buscarAlumno"
+
                   placeholder="🔎 Buscar alumno..."
+
                   autocomplete="off"
+
                 >
 
+
                 <div
+
                   id="listaAlumnos"
+
                   class="listaAlumnos">
+
                 </div>
 
               </div>
@@ -608,6 +967,7 @@
                 "buscarAlumno"
               );
 
+
             const listaAlumnos =
               document.getElementById(
                 "listaAlumnos"
@@ -618,8 +978,11 @@
               filtro
             ) {
 
+
               const texto =
-                String(filtro || "")
+                String(
+                  filtro || ""
+                )
                   .toLowerCase()
                   .trim();
 
@@ -650,22 +1013,27 @@
                   '</div>';
 
                 return;
+
               }
 
 
               filtrados.forEach(
                 function(nombre) {
 
+
                   const fila =
                     document.createElement(
                       "button"
                     );
 
+
                   fila.type =
                     "button";
 
+
                   fila.className =
                     "alumnoManual";
+
 
                   fila.textContent =
                     nombre;
@@ -675,9 +1043,15 @@
                     "click",
                     function() {
 
+
                       consultarAlumno(
+
                         nombre,
-                        ""
+
+                        "",
+
+                        "MANUAL"
+
                       );
 
                     }
@@ -688,8 +1062,10 @@
                     fila
                   );
 
+
                 }
               );
+
 
             }
 
@@ -708,7 +1084,9 @@
 
             mostrarAlumnos("");
 
+
             buscarAlumno.focus();
+
 
           };
 
@@ -730,6 +1108,7 @@
           script
         );
 
+
       }
     );
 
@@ -739,15 +1118,26 @@
        ===================================================== */
 
     function consultarAlumno(
+
       alumno,
-      grupo
+
+      grupo,
+
+      tipo
+
     ) {
 
+
       result.innerHTML =
+
         "<div class='alumno'>" +
+
         "Alumno: " +
+
         alumno +
+
         "</div>";
+
 
       result.style.display =
         "block";
@@ -765,6 +1155,7 @@
       window[callbackConsulta] =
         function(respuesta) {
 
+
           delete window[
             callbackConsulta
           ];
@@ -775,10 +1166,13 @@
             respuesta.error
           ) {
 
+
             status.textContent =
               "❌ Error en la consulta";
 
+
             return;
+
           }
 
 
@@ -790,31 +1184,39 @@
             respuesta.puede
           ) {
 
+
             result.innerHTML = `
 
               <div class="resultadoPermitido">
+
 
                 <div class="iconoResultado">
                   🟢
                 </div>
 
+
                 <div class="tituloResultado">
                   ACCESO PERMITIDO
                 </div>
 
+
                 <div class="datosResultado">
+
 
                   <div>
                     Alumno:
                     ${respuesta.alumno}
                   </div>
 
+
                   <div>
                     Usos hoy:
                     ${respuesta.vecesHoy}
                   </div>
 
+
                 </div>
+
 
               </div>
 
@@ -827,37 +1229,46 @@
 
           }
 
+
           /* =========================================
              ACCESO DENEGADO
              ========================================= */
 
           else {
 
+
             result.innerHTML = `
 
               <div class="resultadoDenegado">
+
 
                 <div class="iconoResultado">
                   🔴
                 </div>
 
+
                 <div class="tituloResultado">
                   ACCESO DENEGADO
                 </div>
 
+
                 <div class="datosResultado">
+
 
                   <div>
                     Alumno:
                     ${respuesta.alumno}
                   </div>
 
+
                   <div>
                     Usos hoy:
                     ${respuesta.vecesHoy}
                   </div>
 
+
                 </div>
+
 
               </div>
 
@@ -867,7 +1278,9 @@
             status.textContent =
               "⛔ No puede acceder";
 
+
           }
+
 
         };
 
@@ -879,13 +1292,31 @@
 
 
       scriptConsulta.src =
+
         APPS_SCRIPT_URL +
+
         "?accion=consultar" +
+
         "&alumno=" +
-        encodeURIComponent(alumno) +
+
+        encodeURIComponent(
+          alumno
+        ) +
+
         "&grupo=" +
-        encodeURIComponent(grupo || "") +
+
+        encodeURIComponent(
+          grupo || ""
+        ) +
+
+        "&tipo=" +
+
+        encodeURIComponent(
+          tipo || "MANUAL"
+        ) +
+
         "&callback=" +
+
         callbackConsulta;
 
 
@@ -893,9 +1324,12 @@
         scriptConsulta
       );
 
+
     }
+
 
   </script>
 
 </body>
+
 </html>
