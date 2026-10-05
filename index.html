@@ -1,348 +1,784 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
 <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+>
 
 <title>Control Aseo TDP</title>
 
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 
+
 <style>
+
 * {
   box-sizing: border-box;
 }
 
+
 html,
 body {
+
   margin: 0;
   padding: 0;
+
   width: 100%;
   min-height: 100%;
+
   background: #000;
   color: #fff;
-  font-family: Arial, Helvetica, sans-serif;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
 }
 
+
 body {
+
   min-height: 100vh;
+
   display: flex;
   justify-content: center;
 }
 
+
 .app {
+
   width: 100%;
   max-width: 500px;
+
   min-height: 100vh;
-  padding: 20px 16px 30px;
+
+  padding:
+    20px
+    16px
+    30px;
+
   display: flex;
   flex-direction: column;
 }
 
+
 .titulo {
+
   text-align: center;
+
   font-size: 24px;
+
   font-weight: bold;
-  margin: 5px 0 8px;
+
+  margin:
+    5px
+    0
+    8px;
 }
 
+
 .subtitulo {
+
   text-align: center;
+
   color: #aaa;
+
   font-size: 14px;
+
   margin-bottom: 20px;
 }
 
-/* =========================
-   CÁMARA
-   ========================= */
 
-#cameraContainer {
-  position: relative;
+/* =========================================
+   LOGIN
+========================================= */
+
+#loginPanel {
+
   width: 100%;
-  aspect-ratio: 1 / 1;
-  max-height: 65vh;
-  background: #111;
+
+  margin: auto 0;
+
+  padding:
+    28px
+    20px;
+
+  border:
+    1px solid
+    #333;
+
   border-radius: 18px;
-  overflow: hidden;
-  display: none;
-}
 
-#video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+  background: #101010;
 
-.scanBox {
-  position: absolute;
-  width: 65%;
-  aspect-ratio: 1 / 1;
-  left: 17.5%;
-  top: 17.5%;
-  border: 3px solid #fff;
-  border-radius: 15px;
-  box-shadow: 0 0 0 9999px rgba(0, 0, 0, .45);
-  pointer-events: none;
-}
-
-.scanLine {
-  position: absolute;
-  left: 10%;
-  width: 80%;
-  height: 2px;
-  background: #fff;
-  top: 50%;
-  animation: scan 2s linear infinite;
-}
-
-@keyframes scan {
-  0% {
-    transform: translateY(-90px);
-  }
-
-  50% {
-    transform: translateY(90px);
-  }
-
-  100% {
-    transform: translateY(-90px);
-  }
-}
-
-#canvas {
-  display: none;
-}
-
-/* =========================
-   ESTADO
-   ========================= */
-
-#status {
   text-align: center;
-  min-height: 24px;
-  margin: 14px 0;
-  color: #bbb;
-  font-size: 15px;
 }
 
-/* =========================
-   RESULTADO
-   ========================= */
 
-#result {
-  display: none;
-  width: 100%;
-  text-align: center;
-  margin-bottom: 18px;
-}
+.loginIcon {
 
-.resultadoPermitido,
-.resultadoDenegado {
-  padding: 25px 10px;
-}
+  font-size: 58px;
 
-.iconoResultado {
-  font-size: 75px;
   line-height: 1;
-  margin-bottom: 12px;
+
+  margin-bottom: 15px;
 }
 
-.tituloResultado {
-  font-size: 28px;
+
+.loginTitulo {
+
+  font-size: 25px;
+
   font-weight: bold;
-  margin-bottom: 14px;
+
+  margin-bottom: 8px;
 }
 
-.datosResultado {
-  font-size: 17px;
-  line-height: 1.7;
+
+.loginTexto {
+
+  color: #999;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+
+  margin-bottom: 20px;
 }
 
-.alumno {
-  font-size: 18px;
-  margin-bottom: 12px;
-}
 
-/* =========================
-   BOTONES
-   ========================= */
+#passwordInput {
 
-.botones {
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.botonPrincipal {
   width: 100%;
-  border: none;
-  border-radius: 14px;
-  padding: 16px;
-  font-size: 17px;
-  font-weight: bold;
-  background: #fff;
-  color: #000;
-  cursor: pointer;
-}
 
-.botonSecundario {
-  width: 100%;
-  border: 1px solid #555;
-  border-radius: 14px;
   padding: 15px;
-  font-size: 16px;
-  font-weight: bold;
-  background: #151515;
-  color: #fff;
-  cursor: pointer;
-}
 
-button:active {
-  transform: scale(.98);
-}
-
-/* =========================
-   REGISTRO MANUAL
-   ========================= */
-
-.manualPanel {
-  width: 100%;
-  text-align: left;
-}
-
-.manualPanel h2 {
-  margin: 0 0 12px;
-  text-align: center;
-  font-size: 21px;
-}
-
-.buscarAlumno {
-  width: 100%;
-  padding: 14px 16px;
   border-radius: 12px;
-  border: 1px solid #444;
-  background: #151515;
+
+  border:
+    1px solid
+    #444;
+
+  background: #050505;
+
   color: #fff;
-  font-size: 16px;
+
+  font-size: 17px;
+
   outline: none;
-  margin-bottom: 10px;
+
+  text-align: center;
 }
 
-.buscarAlumno:focus {
+
+#passwordInput:focus {
+
   border-color: #888;
 }
 
-.buscarAlumno::placeholder {
-  color: #888;
-}
 
-.listaAlumnos {
-  width: 100%;
-  max-height: 48vh;
-  overflow-y: auto;
-  border: 1px solid #333;
-  border-radius: 12px;
-  background: #101010;
-}
+#loginButton {
 
-.alumnoManual {
-  display: block;
   width: 100%;
-  padding: 13px 15px;
-  margin: 0;
+
+  margin-top: 12px;
+
   border: none;
-  border-bottom: 1px solid #292929;
-  background: transparent;
-  color: #fff;
-  text-align: left;
-  font-size: 16px;
+
+  border-radius: 12px;
+
+  padding: 15px;
+
+  font-size: 17px;
+
+  font-weight: bold;
+
+  background: #fff;
+
+  color: #000;
+
   cursor: pointer;
 }
 
+
+#loginStatus {
+
+  min-height: 22px;
+
+  margin-top: 13px;
+
+  color: #aaa;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   APP PROTEGIDA
+========================================= */
+
+#protectedApp {
+
+  display: none;
+
+  width: 100%;
+
+  min-height:
+    calc(100vh - 50px);
+
+  flex-direction: column;
+}
+
+
+/* =========================================
+   CÁMARA
+========================================= */
+
+#cameraContainer {
+
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio: 1 / 1;
+
+  max-height: 65vh;
+
+  background: #111;
+
+  border-radius: 18px;
+
+  overflow: hidden;
+
+  display: none;
+}
+
+
+#video {
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+
+.scanBox {
+
+  position: absolute;
+
+  width: 65%;
+
+  aspect-ratio: 1 / 1;
+
+  left: 17.5%;
+  top: 17.5%;
+
+  border:
+    3px solid
+    #fff;
+
+  border-radius: 15px;
+
+  box-shadow:
+    0 0 0 9999px
+    rgba(0,0,0,.45);
+
+  pointer-events: none;
+}
+
+
+.scanLine {
+
+  position: absolute;
+
+  left: 10%;
+
+  width: 80%;
+
+  height: 2px;
+
+  background: #fff;
+
+  top: 50%;
+
+  animation:
+    scan 2s linear infinite;
+}
+
+
+@keyframes scan {
+
+  0% {
+    transform:
+      translateY(-90px);
+  }
+
+  50% {
+    transform:
+      translateY(90px);
+  }
+
+  100% {
+    transform:
+      translateY(-90px);
+  }
+}
+
+
+#canvas {
+
+  display: none;
+}
+
+
+/* =========================================
+   ESTADO
+========================================= */
+
+#status {
+
+  text-align: center;
+
+  min-height: 24px;
+
+  margin:
+    14px
+    0;
+
+  color: #bbb;
+
+  font-size: 15px;
+}
+
+
+#result {
+
+  display: none;
+
+  width: 100%;
+
+  text-align: center;
+
+  margin-bottom: 18px;
+}
+
+
+/* =========================================
+   RESULTADO
+========================================= */
+
+.resultadoPermitido,
+.resultadoDenegado {
+
+  padding:
+    25px
+    10px;
+}
+
+
+.iconoResultado {
+
+  font-size: 75px;
+
+  line-height: 1;
+
+  margin-bottom: 12px;
+}
+
+
+.tituloResultado {
+
+  font-size: 28px;
+
+  font-weight: bold;
+
+  margin-bottom: 14px;
+}
+
+
+.datosResultado {
+
+  font-size: 17px;
+
+  line-height: 1.7;
+}
+
+
+.alumno {
+
+  font-size: 18px;
+
+  margin-bottom: 12px;
+}
+
+
+/* =========================================
+   BOTONES
+========================================= */
+
+.botones {
+
+  margin-top: auto;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+
+.botonPrincipal {
+
+  width: 100%;
+
+  border: none;
+
+  border-radius: 14px;
+
+  padding: 16px;
+
+  font-size: 17px;
+
+  font-weight: bold;
+
+  background: #fff;
+
+  color: #000;
+
+  cursor: pointer;
+}
+
+
+.botonSecundario {
+
+  width: 100%;
+
+  border:
+    1px solid
+    #555;
+
+  border-radius: 14px;
+
+  padding: 15px;
+
+  font-size: 16px;
+
+  font-weight: bold;
+
+  background: #151515;
+
+  color: #fff;
+
+  cursor: pointer;
+}
+
+
+.botonSalir {
+
+  width: 100%;
+
+  border:
+    1px solid
+    #333;
+
+  border-radius: 12px;
+
+  padding: 10px;
+
+  font-size: 13px;
+
+  background: #080808;
+
+  color: #777;
+
+  cursor: pointer;
+}
+
+
+button:active {
+
+  transform:
+    scale(.98);
+}
+
+
+/* =========================================
+   REGISTRO MANUAL
+========================================= */
+
+.manualPanel {
+
+  width: 100%;
+
+  text-align: left;
+}
+
+
+.manualPanel h2 {
+
+  margin:
+    0
+    0
+    12px;
+
+  text-align: center;
+
+  font-size: 21px;
+}
+
+
+.buscarAlumno {
+
+  width: 100%;
+
+  padding:
+    14px
+    16px;
+
+  border-radius: 12px;
+
+  border:
+    1px solid
+    #444;
+
+  background: #151515;
+
+  color: #fff;
+
+  font-size: 16px;
+
+  outline: none;
+
+  margin-bottom: 10px;
+}
+
+
+.buscarAlumno:focus {
+
+  border-color: #888;
+}
+
+
+.buscarAlumno::placeholder {
+
+  color: #888;
+}
+
+
+.listaAlumnos {
+
+  width: 100%;
+
+  max-height: 48vh;
+
+  overflow-y: auto;
+
+  border:
+    1px solid
+    #333;
+
+  border-radius: 12px;
+
+  background: #101010;
+}
+
+
+.alumnoManual {
+
+  display: block;
+
+  width: 100%;
+
+  padding:
+    13px
+    15px;
+
+  margin: 0;
+
+  border: none;
+
+  border-bottom:
+    1px solid
+    #292929;
+
+  background: transparent;
+
+  color: #fff;
+
+  text-align: left;
+
+  font-size: 16px;
+
+  cursor: pointer;
+}
+
+
 .alumnoManual:last-child {
+
   border-bottom: none;
 }
 
+
 .alumnoManual:active {
+
   background: #292929;
 }
 
+
 .nombreAlumno {
+
   display: block;
+
   font-size: 16px;
 }
 
+
 .grupoAlumno {
+
   display: block;
+
   margin-top: 3px;
+
   color: #888;
+
   font-size: 13px;
 }
 
+
 .sinAlumnos {
+
   padding: 20px;
+
   text-align: center;
+
   color: #888;
 }
+
 </style>
+
 </head>
+
 
 <body>
 
+
 <div class="app">
+
 
   <div class="titulo">
     Control Aseo TDP
   </div>
 
+
   <div class="subtitulo">
     Control de acceso
   </div>
 
-  <!-- CÁMARA -->
 
-  <div id="cameraContainer">
+  <!-- =====================================
+       LOGIN
+  ====================================== -->
 
-    <video
-      id="video"
-      autoplay
-      muted
-      playsinline>
-    </video>
+  <div id="loginPanel">
 
-    <div class="scanBox">
-      <div class="scanLine"></div>
+    <div class="loginIcon">
+      🔒
     </div>
 
-  </div>
+    <div class="loginTitulo">
+      Acceso protegido
+    </div>
 
-  <canvas id="canvas"></canvas>
+    <div class="loginTexto">
+      Introduce la contraseña para utilizar el control.
+    </div>
 
-  <div id="status">
-    Pulsa "Activar cámara" para comenzar
-  </div>
+    <input
+      id="passwordInput"
+      type="password"
+      placeholder="Contraseña"
+      autocomplete="current-password"
+    >
 
-  <div id="result"></div>
-
-  <!-- BOTONES -->
-
-  <div class="botones">
-
-    <button
-      id="startButton"
-      class="botonPrincipal">
-      📷 Activar cámara
+    <button id="loginButton">
+      Entrar
     </button>
 
-    <button
-      id="manualButton"
-      class="botonSecundario">
-      👤 Registro manual
-    </button>
+    <div id="loginStatus"></div>
+
+  </div>
+
+
+  <!-- =====================================
+       APLICACIÓN
+  ====================================== -->
+
+  <div id="protectedApp">
+
+
+    <div id="cameraContainer">
+
+      <video
+        id="video"
+        autoplay
+        muted
+        playsinline
+      ></video>
+
+      <div class="scanBox">
+
+        <div class="scanLine"></div>
+
+      </div>
+
+    </div>
+
+
+    <canvas id="canvas"></canvas>
+
+
+    <div id="status">
+      Pulsa "Activar cámara" para comenzar
+    </div>
+
+
+    <div id="result"></div>
+
+
+    <div class="botones">
+
+      <button
+        id="startButton"
+        class="botonPrincipal"
+      >
+        📷 Activar cámara
+      </button>
+
+
+      <button
+        id="manualButton"
+        class="botonSecundario"
+      >
+        👤 Registro manual
+      </button>
+
+
+      <button
+        id="logoutButton"
+        class="botonSalir"
+      >
+        Cerrar sesión
+      </button>
+
+    </div>
+
 
   </div>
 
@@ -351,46 +787,104 @@ button:active {
 
 <script>
 
-/* =========================================================
-   CONFIGURACIÓN
-   ========================================================= */
+
+// =========================================
+// URL DE APPS SCRIPT
+// =========================================
 
 const APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbwmjR4yz2Psp-eoc3tpa9czj9pciq67Jq4zex77hkSny6dgieorVYqUpgQHD_ZIMOR2/exec";
 
 
-/* =========================================================
-   ELEMENTOS
-   ========================================================= */
+// =========================================
+// ELEMENTOS
+// =========================================
+
+const loginPanel =
+  document.getElementById(
+    "loginPanel"
+  );
+
+
+const protectedApp =
+  document.getElementById(
+    "protectedApp"
+  );
+
+
+const passwordInput =
+  document.getElementById(
+    "passwordInput"
+  );
+
+
+const loginButton =
+  document.getElementById(
+    "loginButton"
+  );
+
+
+const loginStatus =
+  document.getElementById(
+    "loginStatus"
+  );
+
+
+const logoutButton =
+  document.getElementById(
+    "logoutButton"
+  );
+
 
 const video =
-  document.getElementById("video");
+  document.getElementById(
+    "video"
+  );
+
 
 const canvas =
-  document.getElementById("canvas");
+  document.getElementById(
+    "canvas"
+  );
+
 
 const ctx =
   canvas.getContext("2d");
 
+
 const cameraContainer =
-  document.getElementById("cameraContainer");
+  document.getElementById(
+    "cameraContainer"
+  );
+
 
 const startButton =
-  document.getElementById("startButton");
+  document.getElementById(
+    "startButton"
+  );
+
 
 const manualButton =
-  document.getElementById("manualButton");
+  document.getElementById(
+    "manualButton"
+  );
+
 
 const status =
-  document.getElementById("status");
+  document.getElementById(
+    "status"
+  );
+
 
 const result =
-  document.getElementById("result");
+  document.getElementById(
+    "result"
+  );
 
 
-/* =========================================================
-   VARIABLES
-   ========================================================= */
+// =========================================
+// VARIABLES
+// =========================================
 
 let stream = null;
 
@@ -400,85 +894,338 @@ let ultimoQR = "";
 
 let tiempoUltimoQR = 0;
 
+// La contraseña se mantiene solamente
+// mientras la página está abierta.
 
-/* =========================================================
-   ACTIVAR CÁMARA
-   ========================================================= */
+let sessionPassword = "";
 
-startButton.addEventListener("click", async function () {
 
-  try {
+// =========================================
+// LOGIN
+// =========================================
 
-    result.style.display = "none";
+loginButton.addEventListener(
+  "click",
+  iniciarSesion
+);
+
+
+passwordInput.addEventListener(
+  "keydown",
+  function(event) {
+
+    if (
+      event.key === "Enter"
+    ) {
+
+      iniciarSesion();
+    }
+
+  }
+);
+
+
+function iniciarSesion() {
+
+  const password =
+    passwordInput.value;
+
+
+  if (!password) {
+
+    loginStatus.textContent =
+      "Introduce la contraseña.";
+
+    return;
+  }
+
+
+  loginButton.disabled = true;
+
+  loginStatus.textContent =
+    "⏳ Comprobando...";
+
+
+  const callbackName =
+    "loginCallback_" +
+    Date.now();
+
+
+  window[callbackName] =
+    function(respuesta) {
+
+      delete window[callbackName];
+
+      loginButton.disabled =
+        false;
+
+
+      if (
+        respuesta &&
+        respuesta.ok
+      ) {
+
+        sessionPassword =
+          password;
+
+
+        passwordInput.value =
+          "";
+
+
+        loginPanel.style.display =
+          "none";
+
+
+        protectedApp.style.display =
+          "flex";
+
+
+        loginStatus.textContent =
+          "";
+
+
+        status.textContent =
+          'Pulsa "Activar cámara" para comenzar';
+
+
+      } else {
+
+        loginStatus.textContent =
+          "❌ Contraseña incorrecta.";
+
+
+        passwordInput.select();
+      }
+
+    };
+
+
+  const script =
+    document.createElement(
+      "script"
+    );
+
+
+  script.src =
+    APPS_SCRIPT_URL +
+    "?accion=ping" +
+    "&password=" +
+    encodeURIComponent(
+      password
+    ) +
+    "&callback=" +
+    callbackName;
+
+
+  script.onerror =
+    function() {
+
+      delete window[
+        callbackName
+      ];
+
+
+      loginButton.disabled =
+        false;
+
+
+      loginStatus.textContent =
+        "❌ No se puede conectar con el servidor.";
+
+    };
+
+
+  document.body.appendChild(
+    script
+  );
+}
+
+
+// =========================================
+// CERRAR SESIÓN
+// =========================================
+
+logoutButton.addEventListener(
+  "click",
+  function() {
+
+    detenerCamara();
+
+    sessionPassword = "";
+
+    protectedApp.style.display =
+      "none";
+
+    loginPanel.style.display =
+      "block";
+
+    result.style.display =
+      "none";
 
     status.textContent =
-      "⏳ Activando cámara...";
+      'Pulsa "Activar cámara" para comenzar';
 
-    if (!navigator.mediaDevices ||
-        !navigator.mediaDevices.getUserMedia) {
+    loginStatus.textContent =
+      "";
 
-      status.textContent =
-        "❌ Este navegador no permite acceder a la cámara.";
+    passwordInput.value =
+      "";
+
+    passwordInput.focus();
+
+  }
+);
+
+
+// =========================================
+// DETENER CÁMARA
+// =========================================
+
+function detenerCamara() {
+
+  escaneando = false;
+
+
+  if (stream) {
+
+    stream
+      .getTracks()
+      .forEach(
+        function(track) {
+
+          track.stop();
+
+        }
+      );
+
+
+    stream = null;
+  }
+
+
+  video.srcObject =
+    null;
+
+
+  cameraContainer.style.display =
+    "none";
+}
+
+
+// =========================================
+// ACTIVAR CÁMARA
+// =========================================
+
+startButton.addEventListener(
+  "click",
+  async function() {
+
+    if (!sessionPassword) {
+
+      mostrarLogin();
 
       return;
     }
 
-    stream =
-      await navigator.mediaDevices.getUserMedia({
 
-        video: {
-          facingMode: {
-            ideal: "environment"
-          }
-        },
+    try {
 
-        audio: false
+      result.style.display =
+        "none";
 
-      });
 
-    video.srcObject = stream;
+      status.textContent =
+        "⏳ Activando cámara...";
 
-    cameraContainer.style.display =
-      "block";
 
-    escaneando = true;
+      if (
+        !navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia
+      ) {
 
-    ultimoQR = "";
+        status.textContent =
+          "❌ Este navegador no permite acceder a la cámara.";
 
-    status.textContent =
-      "📷 Apunta al código QR";
+        return;
+      }
 
-    requestAnimationFrame(escanearQR);
 
-  } catch (error) {
+      detenerCamara();
 
-    console.error(error);
 
-    status.textContent =
-      "❌ No se puede acceder a la cámara. Comprueba los permisos.";
+      stream =
+        await navigator.mediaDevices.getUserMedia({
+
+          video: {
+            facingMode: {
+              ideal: "environment"
+            }
+          },
+
+          audio: false
+
+        });
+
+
+      video.srcObject =
+        stream;
+
+
+      cameraContainer.style.display =
+        "block";
+
+
+      escaneando = true;
+
+      ultimoQR = "";
+
+      status.textContent =
+        "📷 Apunta al código QR";
+
+
+      requestAnimationFrame(
+        escanearQR
+      );
+
+
+    } catch (error) {
+
+      console.error(error);
+
+
+      status.textContent =
+        "❌ No se puede acceder a la cámara. Comprueba los permisos.";
+
+    }
 
   }
+);
 
-});
 
-
-/* =========================================================
-   ESCANEAR QR
-   ========================================================= */
+// =========================================
+// ESCÁNER QR
+// =========================================
 
 function escanearQR() {
 
   if (!escaneando) {
+
     return;
   }
 
-  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+
+  if (
+    video.readyState ===
+    video.HAVE_ENOUGH_DATA
+  ) {
 
     canvas.width =
       video.videoWidth;
 
     canvas.height =
       video.videoHeight;
+
 
     ctx.drawImage(
       video,
@@ -488,6 +1235,7 @@ function escanearQR() {
       canvas.height
     );
 
+
     const imageData =
       ctx.getImageData(
         0,
@@ -496,7 +1244,11 @@ function escanearQR() {
         canvas.height
       );
 
-    if (typeof jsQR !== "undefined") {
+
+    if (
+      typeof jsQR !==
+      "undefined"
+    ) {
 
       const codigo =
         jsQR(
@@ -505,39 +1257,40 @@ function escanearQR() {
           imageData.height
         );
 
+
       if (codigo) {
 
         const ahora =
           Date.now();
 
-        /*
-         Evita leer varias veces el mismo QR
-         inmediatamente.
-        */
 
         if (
-          codigo.data !== ultimoQR ||
-          ahora - tiempoUltimoQR > 3000
+          codigo.data !==
+            ultimoQR ||
+          ahora -
+            tiempoUltimoQR >
+            3000
         ) {
 
           ultimoQR =
             codigo.data;
 
+
           tiempoUltimoQR =
             ahora;
+
 
           procesarQR(
             codigo.data
           );
 
+
           return;
         }
-
       }
-
     }
-
   }
+
 
   requestAnimationFrame(
     escanearQR
@@ -545,41 +1298,58 @@ function escanearQR() {
 }
 
 
-/* =========================================================
-   PROCESAR QR
-   ========================================================= */
+// =========================================
+// PROCESAR QR
+// =========================================
 
-function procesarQR(textoQR) {
+function procesarQR(
+  textoQR
+) {
 
   escaneando = false;
 
+
   status.textContent =
     "⏳ QR detectado. Consultando...";
+
 
   const partes =
     String(textoQR)
       .trim()
       .split("|");
 
+
   const alumno =
-    (partes[0] || "").trim();
+    (
+      partes[0] ||
+      ""
+    ).trim();
+
 
   const grupo =
-    (partes[1] || "").trim();
+    (
+      partes[1] ||
+      ""
+    ).trim();
+
 
   if (!alumno) {
 
     status.textContent =
       "❌ QR no válido";
 
+
     escaneando = true;
+
 
     requestAnimationFrame(
       escanearQR
     );
 
+
     return;
   }
+
 
   consultarAlumno(
     alumno,
@@ -589,31 +1359,31 @@ function procesarQR(textoQR) {
 }
 
 
-/* =========================================================
-   REGISTRO MANUAL
-   ========================================================= */
+// =========================================
+// REGISTRO MANUAL
+// =========================================
 
 manualButton.addEventListener(
   "click",
-  function () {
+  function() {
 
-    /*
-     Paramos el escaneo si estaba activo.
-    */
+    if (!sessionPassword) {
+
+      mostrarLogin();
+
+      return;
+    }
+
 
     escaneando = false;
 
     result.style.display =
       "block";
 
+
     status.textContent =
       "⏳ Cargando alumnos...";
 
-
-    /*
-     JSONP para evitar problemas
-     de CORS con Apps Script.
-    */
 
     const callbackName =
       "alumnosCallback_" +
@@ -621,9 +1391,11 @@ manualButton.addEventListener(
 
 
     window[callbackName] =
-      function (respuesta) {
+      function(respuesta) {
 
-        delete window[callbackName];
+        delete window[
+          callbackName
+        ];
 
 
         if (
@@ -632,18 +1404,26 @@ manualButton.addEventListener(
         ) {
 
           status.textContent =
-            "❌ Error al cargar alumnos";
+            "❌ " +
+            (
+              respuesta &&
+              respuesta.error
+                ? respuesta.error
+                : "Error al cargar alumnos"
+            );
 
           return;
         }
 
 
         const alumnos =
-          respuesta.alumnos || [];
+          respuesta.alumnos ||
+          [];
 
 
         if (
-          alumnos.length === 0
+          alumnos.length ===
+          0
         ) {
 
           status.textContent =
@@ -652,19 +1432,6 @@ manualButton.addEventListener(
           return;
         }
 
-
-        /*
-         IMPORTANTE:
-
-         Cada alumno recibido es:
-
-         {
-           nombre: "...",
-           grupo: "..."
-         }
-
-         No se muestra directamente el objeto.
-        */
 
         result.innerHTML = `
 
@@ -684,8 +1451,8 @@ manualButton.addEventListener(
 
             <div
               id="listaAlumnos"
-              class="listaAlumnos">
-            </div>
+              class="listaAlumnos"
+            ></div>
 
           </div>
 
@@ -697,60 +1464,43 @@ manualButton.addEventListener(
             "buscarAlumno"
           );
 
+
         const listaAlumnos =
           document.getElementById(
             "listaAlumnos"
           );
 
 
-        /* -----------------------------------------
-           MOSTRAR ALUMNOS
-           ----------------------------------------- */
-
-        function mostrarAlumnos(filtro) {
+        function mostrarAlumnos(
+          filtro
+        ) {
 
           const texto =
-            String(filtro || "")
-              .toLowerCase()
-              .trim();
+            String(
+              filtro || ""
+            )
+            .toLowerCase()
+            .trim();
 
 
           const filtrados =
             alumnos.filter(
-              function (item) {
+              function(item) {
 
-                /*
-                 Compatibilidad por si algún
-                 dato antiguo llegara como texto.
-                */
+                const nombre =
+                  String(
+                    item &&
+                    item.nombre ||
+                    ""
+                  );
 
-                let nombre = "";
-                let grupo = "";
 
-
-                if (
-                  typeof item === "string"
-                ) {
-
-                  nombre =
-                    item;
-
-                } else if (
-                  item &&
-                  typeof item === "object"
-                ) {
-
-                  nombre =
-                    String(
-                      item.nombre || ""
-                    );
-
-                  grupo =
-                    String(
-                      item.grupo || ""
-                    );
-
-                }
+                const grupo =
+                  String(
+                    item &&
+                    item.grupo ||
+                    ""
+                  );
 
 
                 return (
@@ -759,7 +1509,7 @@ manualButton.addEventListener(
                     .toLowerCase()
                     .includes(texto)
 
-                  ||
+                ) || (
 
                   grupo
                     .toLowerCase()
@@ -776,80 +1526,59 @@ manualButton.addEventListener(
 
 
           if (
-            filtrados.length === 0
+            filtrados.length ===
+            0
           ) {
 
-            listaAlumnos.innerHTML = `
-
-              <div class="sinAlumnos">
-                No se encuentra ningún alumno
-              </div>
-
-            `;
+            listaAlumnos.innerHTML =
+              '<div class="sinAlumnos">' +
+              'No se encuentra ningún alumno' +
+              '</div>';
 
             return;
           }
 
 
           filtrados.forEach(
-            function (item) {
+            function(item) {
 
-              let nombre = "";
-              let grupo = "";
-
-
-              if (
-                typeof item === "string"
-              ) {
-
-                nombre =
-                  item;
-
-              } else if (
-                item &&
-                typeof item === "object"
-              ) {
-
-                nombre =
-                  String(
-                    item.nombre || ""
-                  );
-
-                grupo =
-                  String(
-                    item.grupo || ""
-                  );
-
-              }
+              const nombre =
+                String(
+                  item.nombre ||
+                  ""
+                );
 
 
-              /*
-               Creamos botón.
-              */
+              const grupo =
+                String(
+                  item.grupo ||
+                  ""
+                );
+
 
               const fila =
                 document.createElement(
                   "button"
                 );
 
+
               fila.type =
                 "button";
+
 
               fila.className =
                 "alumnoManual";
 
-
-              /*
-               Nombre
-              */
 
               const nombreElemento =
                 document.createElement(
                   "span"
                 );
 
+
               nombreElemento.className =
                 "nombreAlumno";
+
 
               nombreElemento.textContent =
                 nombre;
@@ -860,10 +1589,6 @@ manualButton.addEventListener(
               );
 
 
-              /*
-               Grupo
-              */
-
               if (grupo) {
 
                 const grupoElemento =
@@ -871,28 +1596,25 @@ manualButton.addEventListener(
                     "span"
                   );
 
+
                 grupoElemento.className =
                   "grupoAlumno";
 
+
                 grupoElemento.textContent =
-                  "Grupo: " + grupo;
+                  "Grupo: " +
+                  grupo;
 
 
                 fila.appendChild(
                   grupoElemento
                 );
-
               }
 
 
-              /*
-               Al pulsar alumno:
-               enviamos nombre Y grupo.
-              */
-
               fila.addEventListener(
                 "click",
-                function () {
+                function() {
 
                   consultarAlumno(
                     nombre,
@@ -914,13 +1636,9 @@ manualButton.addEventListener(
         }
 
 
-        /*
-         Buscar mientras escribe.
-        */
-
         buscarAlumno.addEventListener(
           "input",
-          function () {
+          function() {
 
             mostrarAlumnos(
               this.value
@@ -930,36 +1648,44 @@ manualButton.addEventListener(
         );
 
 
-        /*
-         Mostrar todos inicialmente.
-        */
-
         mostrarAlumnos("");
 
-
-        /*
-         Poner el cursor en buscar.
-        */
 
         buscarAlumno.focus();
 
       };
 
 
-    /*
-     Cargar alumnos desde Apps Script.
-    */
-
     const script =
       document.createElement(
         "script"
       );
 
+
     script.src =
       APPS_SCRIPT_URL +
       "?accion=alumnos" +
+      "&password=" +
+      encodeURIComponent(
+        sessionPassword
+      ) +
       "&callback=" +
       callbackName;
+
+
+    script.onerror =
+      function() {
+
+        delete window[
+          callbackName
+        ];
+
+
+        status.textContent =
+          "❌ No se puede conectar con el servidor.";
+
+      };
+
 
     document.body.appendChild(
       script
@@ -969,9 +1695,9 @@ manualButton.addEventListener(
 );
 
 
-/* =========================================================
-   CONSULTAR ALUMNO
-   ========================================================= */
+// =========================================
+// CONSULTAR ALUMNO
+// =========================================
 
 function consultarAlumno(
   alumno,
@@ -979,13 +1705,20 @@ function consultarAlumno(
   tipo
 ) {
 
-  result.innerHTML = `
+  if (!sessionPassword) {
 
-    <div class="alumno">
-      Alumno: ${escapeHtml(alumno)}
-    </div>
+    mostrarLogin();
 
-  `;
+    return;
+  }
+
+
+  result.innerHTML =
+    `<div class="alumno">
+      Alumno:
+      ${escapeHtml(alumno)}
+    </div>`;
+
 
   result.style.display =
     "block";
@@ -995,26 +1728,18 @@ function consultarAlumno(
     "⏳ Consultando...";
 
 
-  /*
-   Nombre único para JSONP.
-  */
-
   const callbackConsulta =
     "consultaCallback_" +
     Date.now();
 
 
   window[callbackConsulta] =
-    function (respuesta) {
+    function(respuesta) {
 
       delete window[
         callbackConsulta
       ];
 
-
-      /*
-       Error.
-      */
 
       if (
         !respuesta ||
@@ -1033,14 +1758,6 @@ function consultarAlumno(
         return;
       }
 
-
-      /*
-       B10 devuelve el número de usos
-       que ya llevaba.
-
-       La aplicación muestra +1,
-       como pediste.
-      */
 
       let usosMostrados;
 
@@ -1062,21 +1779,11 @@ function consultarAlumno(
 
         usosMostrados =
           Number(
-            respuesta.vecesHoy || 0
+            respuesta.vecesHoy ||
+            0
           ) + 1;
-
       }
 
-
-      /*
-       Grupo final.
-
-       Para QR:
-       grupo del QR.
-
-       Para manual:
-       grupo de Alumnado.
-      */
 
       const grupoResultado =
         respuesta.grupo ||
@@ -1084,15 +1791,15 @@ function consultarAlumno(
         "";
 
 
-      /* ======================================
-         VERDE
-         ====================================== */
-
-      if (respuesta.puede) {
+      if (
+        respuesta.puede
+      ) {
 
         result.innerHTML = `
 
-          <div class="resultadoPermitido">
+          <div
+            class="resultadoPermitido"
+          >
 
             <div class="iconoResultado">
               🟢
@@ -1129,21 +1836,18 @@ function consultarAlumno(
 
         `;
 
+
         status.textContent =
           "✅ Puede acceder";
 
-
-      /*
-       ======================================
-       ROJO
-       ======================================
-      */
 
       } else {
 
         result.innerHTML = `
 
-          <div class="resultadoDenegado">
+          <div
+            class="resultadoDenegado"
+          >
 
             <div class="iconoResultado">
               🔴
@@ -1180,17 +1884,13 @@ function consultarAlumno(
 
         `;
 
+
         status.textContent =
           "⛔ No puede acceder";
-
       }
 
     };
 
-
-  /*
-   Llamada al Apps Script.
-  */
 
   const scriptConsulta =
     document.createElement(
@@ -1200,40 +1900,74 @@ function consultarAlumno(
 
   scriptConsulta.src =
     APPS_SCRIPT_URL +
-
     "?accion=consultar" +
-
     "&alumno=" +
     encodeURIComponent(
       alumno
     ) +
-
     "&grupo=" +
     encodeURIComponent(
       grupo || ""
     ) +
-
     "&tipo=" +
     encodeURIComponent(
       tipo || "MANUAL"
     ) +
-
+    "&password=" +
+    encodeURIComponent(
+      sessionPassword
+    ) +
     "&callback=" +
     callbackConsulta;
+
+
+  scriptConsulta.onerror =
+    function() {
+
+      delete window[
+        callbackConsulta
+      ];
+
+
+      status.textContent =
+        "❌ No se puede conectar con el servidor.";
+
+    };
 
 
   document.body.appendChild(
     scriptConsulta
   );
-
 }
 
 
-/* =========================================================
-   ESCAPAR HTML
-   ========================================================= */
+// =========================================
+// VOLVER AL LOGIN
+// =========================================
 
-function escapeHtml(texto) {
+function mostrarLogin() {
+
+  detenerCamara();
+
+  sessionPassword = "";
+
+  protectedApp.style.display =
+    "none";
+
+  loginPanel.style.display =
+    "block";
+
+  passwordInput.focus();
+}
+
+
+// =========================================
+// SEGURIDAD HTML
+// =========================================
+
+function escapeHtml(
+  texto
+) {
 
   return String(
     texto || ""
@@ -1263,7 +1997,6 @@ function escapeHtml(texto) {
       /'/g,
       "&#039;"
     );
-
 }
 
 </script>
